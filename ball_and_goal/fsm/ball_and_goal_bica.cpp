@@ -40,7 +40,7 @@
 
 namespace bica
 {
-ball_and_goal_bica::ball_and_goal_bica() : state_(GO_YELLOW), myBaseId_("ball_and_goal_bica")
+ball_and_goal_bica::ball_and_goal_bica() : state_(GO_BLUE), myBaseId_("ball_and_goal_bica")
 {
   state_ts_ = ros::Time::now();
   state_pub_ = nh_.advertise<std_msgs::String>("/" + myBaseId_ + "/state", 1, false);

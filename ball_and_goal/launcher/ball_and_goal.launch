@@ -1,7 +1,7 @@
 <launch>
 
 	<node pkg="ball_and_goal" type="turn_node" name="turn" /> 
-    <!--<node pkg="ball_and_goal" type="find_blue_goal_node" name="go_blue" /> -->
+    <node pkg="ball_and_goal" type="find_blue_goal_node" name="go_blue" />
     <node pkg="ball_and_goal" type="find_yellow_goal_node" name="go_yellow" /> 
     <node pkg="ball_and_goal" type="find_ball_node" name="go_ball" /> 
 

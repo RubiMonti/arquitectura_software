@@ -14,8 +14,6 @@ int main(int argc, char **argv)
 
   while (go_blue_node.ok())
   {
-    // Creo que si o si tiene haber una funcion step() en los .cpp
-    // De todas formas me lo miraré manana en sus clases. 
     go_blue_node.step();
     ros::spinOnce();
     loop_rate.sleep();

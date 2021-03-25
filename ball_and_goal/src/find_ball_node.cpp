@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "go_blue_node");
+  ros::init(argc, argv, "go_ball_node");
   ros::NodeHandle n;
 
   ball_and_goal_bica::FindBall go_ball_node;
@@ -14,8 +14,7 @@ int main(int argc, char **argv)
 
   while (go_ball_node.ok())
   {
-    // Creo que si o si tiene haber una funcion step() en los .cpp
-    // De todas formas me lo miraré manana en sus clases. 
+    go_ball_node.step();
     ros::spinOnce();
     loop_rate.sleep();
   }
