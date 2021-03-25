@@ -22,10 +22,10 @@
 namespace ball_and_goal_bica
 {
 
-class FindBlueGoal : public bica::Component
+class FindYellowGoal : public bica::Component
 {
 public:
-    FindBlueGoal();
+    FindYellowGoal();
     void imageCb(const sensor_msgs::Image::ConstPtr& msg);
     void publish_detection(float x, float y);
     void step();

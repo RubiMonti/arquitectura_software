@@ -28,11 +28,11 @@ public:
     FindBall();
     void imageCb(const sensor_msgs::Image::ConstPtr& msg);
     double publish_detection(float x, float y);
+    void step();
 
 protected:
     ros::NodeHandle nh_;
     ros::Publisher vel_pub_;
-    ros::Subscriber image_subscriber_;
 
     tf2_ros::Buffer buffer_;
     tf2_ros::TransformListener listener_;
@@ -40,8 +40,10 @@ protected:
 
     image_transport::ImageTransport it_;
     image_transport::Subscriber image_sub_;
-    image_transport::Publisher image_pub_;
 
+    int x_ = 0;
+    int y_ = 0;
+    int counter_ = 0;
 };
 
 } // ball_and_goal

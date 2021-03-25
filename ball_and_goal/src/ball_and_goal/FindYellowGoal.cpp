@@ -1,4 +1,4 @@
-#include "ball_and_goal/FindBlueGoal.h"
+#include "ball_and_goal/FindYellowGoal.h"
 
 
 #include "geometry_msgs/Twist.h"
@@ -17,9 +17,9 @@
 namespace ball_and_goal_bica
 {
 
-FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_) 
+FindYellowGoal::FindYellowGoal() : it_(nh_) , buffer_() , listener_(buffer_) 
 {
-    image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindBlueGoal::imageCb, this);
+    image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindYellowGoal::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 
@@ -71,7 +71,7 @@ FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_)
 // }
 
 void
-FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
+FindYellowGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
     ROS_INFO("\nLLAMADA AL CALLBACK\n");
     //if(!isActive()){
@@ -97,7 +97,7 @@ FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
         {
             int posdata = i * step + j * channels;
             
-            if((hsv.data[posdata] >= 0) && (hsv.data[posdata] <= 153) && (hsv.data[posdata+1]  >= 176) && (hsv.data[posdata+1] <= 223) && (hsv.data[posdata+2]  >=70) && (hsv.data[posdata+2] <= 92))
+            if((hsv.data[posdata] >= 90) && (hsv.data[posdata] <= 92) && (hsv.data[posdata+1]  >= 0) && (hsv.data[posdata+1] <= 255) && (hsv.data[posdata+2]  >=0) && (hsv.data[posdata+2] <= 255))
             {
                 x_ += j;
                 y_ += i;
@@ -109,7 +109,7 @@ FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 }
 
 void
-FindBlueGoal::step(){
+FindYellowGoal::step(){
     ROS_INFO("\nSe ejecuta el step\n");
     //if(!isActive()){
     //    return;

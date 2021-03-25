@@ -19,7 +19,7 @@ namespace ball_and_goal_bica
 
 FindBall::FindBall() : it_(nh_) , buffer_() , listener_(buffer_) 
 {
-    image_sub_ = it_.subscribe("/hsv/image_filtered", 1, &FindBall::imageCb, this);
+    image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindBall::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 /*
@@ -73,14 +73,14 @@ FindBall::publish_detection(float x, float y)
 void
 FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    double angle;
-    if(!isActive()){
-        return;
-    }
-    float l = 1;
-    float p = 0;
+    //double angle;
+    //if(!isActive()){
+    //    return;
+    //}
+    //float l = 1;
+    //float p = 0;
 
-    geometry_msgs::Twist msg2;
+    //geometry_msgs::Twist msg2;
     int pos_x,pos_y;
 
     cv_bridge::CvImagePtr cv_ptr, cv_imageout;
@@ -94,43 +94,43 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
     int step = hsv.step;
     int channels = 3;  // RGB
 
-    int x = 0;
-    int y = 0;
-    int counter = 0;
+    x_ = 0;
+    y_ = 0;
+    counter_ = 0;
     for (int i=0; i < height; i++ ){
         for (int j=0; j < width; j++ )
         {
-        int posdata = i * step + j * channels;
-        
-        if((hsv.data[posdata] >= 102) && (hsv.data[posdata] <= 125) && (hsv.data[posdata+1]  >=0) && (hsv.data[posdata+1] <= 255)&& (hsv.data[posdata+2]  >=0) && (hsv.data[posdata+2] <= 255 ))
-        {
-            x += j;
-            y += i;
-            counter++; 
-        }
-        
+            int posdata = i * step + j * channels;
+            
+            if((hsv.data[posdata] >= 102) && (hsv.data[posdata] <= 125) && (hsv.data[posdata+1]  >=0) && (hsv.data[posdata+1] <= 255)&& (hsv.data[posdata+2]  >=0) && (hsv.data[posdata+2] <= 255 ))
+            {
+                x_ += j;
+                y_ += i;
+                counter_++; 
+            }
         }
     }
-    if (counter > 0){
-        //ROS_INFO("Ball at %d %d", x / counter , y / counter);
-        pos_x = x / counter;
-        pos_y = y / counter;
-        /*
-       angle = publish_detection(l, p);
-       if( angle >= -0.1 && angle <= 0.1) 
-       {
-           msg2.linear.x = 0.2;
-           msg2.angular.z = 0.0;
-       }
-       else
-       {
-           msg2.linear.x = 0.0;
-           msg2.angular.z = 0.5;
-       }
-       */
-        msg2.angular.z = 0.5;
+
+}
+
+void
+FindBall::step(){
+    ROS_INFO("\nSe ejecuta el step\n");
+    //if(!isActive()){
+    //    return;
+    //}
+    geometry_msgs::Twist msg2;
+
+    int pos_x,pos_y;
+    if (counter_ > 200){
+        ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
+        pos_x = x_ / counter_;
+        pos_y = y_ / counter_;
+       
+        msg2.angular.z = 0.2;
         if(pos_x >= 200 && pos_x <= 300)
         {
+            /*
             if (pos_y <= 100)
             {
                 msg2.linear.x = 0.0;
@@ -139,14 +139,16 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
             {
                 msg2.linear.x = 0.2;
             }
+            */
+            msg2.linear.x = 0.2;
             msg2.angular.z = 0.0;
         }
-        
-    } else {
-        ROS_INFO("NO BALL FOUND");
+    }
+    else {
+        ROS_INFO("\nNO GOAL FOUND\n");
+        msg2.angular.z = 0.5;
 
     }
-
     vel_pub_.publish(msg2);
 
 }
