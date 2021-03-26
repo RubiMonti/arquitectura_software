@@ -41,12 +41,13 @@ include_directories(
 )
 
 link_directories(
-	${PCL_LIBRARY_DIRS}
+  ${PCL_LIBRARY_DIRS}
+  ${OpenCV_LINK_DIRS}
 )
 
 add_library(${PROJECT_NAME}
    src/${PROJECT_NAME}/FindBall.cpp
-   #src/${PROJECT_NAME}/FindYellowGoal.cpp
+   src/${PROJECT_NAME}/FindYellowGoal.cpp
    src/${PROJECT_NAME}/FindBlueGoal.cpp
    src/${PROJECT_NAME}/Turn.cpp
    src/${PROJECT_NAME}/BallAndGoalBica.cpp
@@ -54,10 +55,6 @@ add_library(${PROJECT_NAME}
 
    fsm/ball_and_goal_bica.cpp
  )
-
-
-  # Hay que comprobar si el nombre de los nodos puestos en este CMakeList 
-  # concuerdan con los puestos en bica. 
 
 
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

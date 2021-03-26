@@ -72,4 +72,10 @@ BallAndGoalBica::Turn_2_Go_yellow()
     return (ros::Time::now() - state_ts_).toSec() > 5.0;
 }
 
+void
+BallAndGoalBica::Go_yellow_code_iterative()
+{
+    ROS_INFO("STATE: GO_YELLOW");
+}
+
 }  // ball_and_goal

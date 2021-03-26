@@ -63,9 +63,9 @@ FindBlueGoal::FindBlueGoal() : it_(nh_)
 void
 FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    // if(!isActive()){
-    //     return;
-    // }
+    if(!isActive()){
+        return;
+    }
 
     cv_bridge::CvImagePtr cv_ptr, cv_imageout;
     cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);  // imagen que me acaba de llegar
@@ -101,9 +101,9 @@ FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 void
 FindBlueGoal::step()
 {
-    // if(!isActive()){
-    //     return;
-    // }
+    if(!isActive()){
+        return;
+    }
     geometry_msgs::Twist msg2;
 
     int pos_x, pos_y;

@@ -62,9 +62,9 @@ FindBall::FindBall() : it_(nh_)
 void
 FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    // if(!isActive()){
-    //     return;
-    // }
+    if(!isActive()){
+        return;
+    }
 
     int pos_x, pos_y;
 
@@ -102,9 +102,9 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 void
 FindBall::step()
 {
-    // if(!isActive()){
-    //     return;
-    // }
+    if(!isActive()){
+        return;
+    }
     geometry_msgs::Twist msg2;
 
     int pos_x, pos_y;
