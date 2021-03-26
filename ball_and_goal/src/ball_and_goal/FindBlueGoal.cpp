@@ -73,7 +73,6 @@ FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_)
 void
 FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    ROS_INFO("\nLLAMADA AL CALLBACK\n");
     //if(!isActive()){
     //    return;
     //}
@@ -105,12 +104,10 @@ FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
             } 
         }
     }
-    ROS_INFO("\nCounter = %d\n", counter_);
 }
 
 void
 FindBlueGoal::step(){
-    ROS_INFO("\nSe ejecuta el step\n");
     //if(!isActive()){
     //    return;
     //}
