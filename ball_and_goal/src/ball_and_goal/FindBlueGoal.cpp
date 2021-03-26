@@ -54,7 +54,7 @@
 namespace ball_and_goal_bica
 {
 
-FindBlueGoal::FindBlueGoal() : it_(nh_)
+FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_)
 {
     image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindBlueGoal::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
