@@ -1,10 +1,47 @@
+/*********************************************************************
+*  Software License Agreement (BSD License)
+*
+*   Copyright (c) 2018, Intelligent Robotics
+*   All rights reserved.
+*
+*   Redistribution and use in source and binary forms, with or without
+*   modification, are permitted provided that the following conditions
+*   are met:
+
+*    * Redistributions of source code must retain the above copyright
+*      notice, this list of conditions and the following disclaimer.
+*    * Redistributions in binary form must reproduce the above
+*      copyright notice, this list of conditions and the following
+*      disclaimer in the documentation and/or other materials provided
+*      with the distribution.
+*    * Neither the name of Intelligent Robotics nor the names of its
+*      contributors may be used to endorse or promote products derived
+*      from this software without specific prior written permission.
+
+*   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+*   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+*   FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+*   COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+*   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+*   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+*   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+*   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*   POSSIBILITY OF SUCH DAMAGE.
+*********************************************************************/
+
+/* Author: Rubén Montilla ruben.montilla.fdez@gmail.com */
+
+/* Mantainer: Rubén Montilla ruben.montilla.fdez@gmail.com */
+
 #include "ball_and_goal/FindYellowGoal.h"
 
 
 #include "geometry_msgs/Twist.h"
 #include "bica/Component.h"
 #include "ros/ros.h"
-#include "geometry_msgs/Twist.h"
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
@@ -17,68 +54,21 @@
 namespace ball_and_goal_bica
 {
 
-FindYellowGoal::FindYellowGoal() : it_(nh_) , buffer_() , listener_(buffer_) 
+FindYellowGoal::FindYellowGoal() : it_(nh_)
 {
     image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindYellowGoal::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 
-// double
-// FindBall::publish_detection(float x, float y)
-// {
-//     double angle;
-//     float x = 1;
-//     float y = 0;
-
-//     geometry_msgs::TransformStamped odom2bf_msg;
-//     try{
-//         odom2bf_msg = buffer_.lookupTransform("odom", "base_footprint", ros::Time(0));
-//     }   catch (std::exception & e)
-//     {
-//         return;
-//     }
-
-//     tf2::Stamped<tf2::Transform> odom2bf;
-//     tf2::fromMsg(odom2bf_msg, odom2bf);
-
-//     tf2::Stamped<tf2::Transform> bf2object;
-//     bf2object.setOrigin(tf2::Vector3(x, y ,0));
-//     bf2object.setRotation(tf2::Quaternion(0, 0, 0, 1));
-
-//     tf2::Transform odom2object = odom2bf * bf2object;
-
-//     geometry_msgs::TransformStamped odom2object_msg;
-//     odom2object_msg.header.stamp = ros::Time::now();
-//     odom2object_msg.header.frame_id = "odom";
-//     odom2object_msg.child_frame_id = "object";
-
-//     odom2object_msg.transform = tf2::toMsg(odom2object);
-
-//     broadcaster.sendTransform(odom2object_msg);
-
-//     geometry_msgs::TransformStamped bf2obj_2_msg;
-//     try {
-//         bf2obj_2_msg = buffer_.lookupTransform( "base_footprint", "object", ros::Time(0));
-//     } catch (std::exception & e)
-//     {
-//         return;
-//     }
-
-//     //angulo del robot respecto a la pelota
-//     angle = atan2(bf2obj_2_msg.transform.translation.y, bf2obj_2_msg.transform.translation.x);
-//     return angle;
-
-// }
-
 void
 FindYellowGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    //if(!isActive()){
-    //    return;
-    //}
+    // if(!isActive()){
+    //     return;
+    // }
 
     cv_bridge::CvImagePtr cv_ptr, cv_imageout;
-    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);//imagen que me acaba de llegar
+    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);  // imagen que me acaba de llegar
 
     cv::Mat hsv;
     cv:cvtColor(cv_ptr->image , hsv, CV_RGB2HSV);
@@ -91,59 +81,51 @@ FindYellowGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
     x_ = 0;
     y_ = 0;
     counter_ = 0;
-    for (int i=0; i < height; i++ ){
-        for (int j=0; j < width; j++ )
+    for ( int i=0; i < height; i++ )
+    {
+        for ( int j=0; j < width; j++ )
         {
             int posdata = i * step + j * channels;
-            
-            if((hsv.data[posdata] >= 90) && (hsv.data[posdata] <= 92) && (hsv.data[posdata+1]  >= 0) && (hsv.data[posdata+1] <= 255) && (hsv.data[posdata+2]  >=0) && (hsv.data[posdata+2] <= 255))
+            if ((hsv.data[posdata] >= 90) && (hsv.data[posdata] <= 92)
+             && (hsv.data[posdata+1]  >= 0) && (hsv.data[posdata+1] <= 255)
+             && (hsv.data[posdata+2]  >=0) && (hsv.data[posdata+2] <= 255))
             {
                 x_ += j;
                 y_ += i;
                 counter_++;
-            } 
+            }
         }
     }
 }
 
 void
-FindYellowGoal::step(){
-    //if(!isActive()){
-    //    return;
-    //}
+FindYellowGoal::step()
+{
+    // if(!isActive()){
+    //     return;
+    // }
     geometry_msgs::Twist msg2;
 
-    int pos_x,pos_y;
-    if (counter_ > 500){
+    int pos_x, pos_y;
+    if (counter_ > 500)
+    {
         ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
         pos_x = x_ / counter_;
         pos_y = y_ / counter_;
-       
         msg2.angular.z = 0.2;
-        if(pos_x >= 200 && pos_x <= 300)
+        if (pos_x >= 200 && pos_x <= 300)
         {
-            /*
-            if (pos_y <= 100)
-            {
-                msg2.linear.x = 0.0;
-            }
-            else 
-            {
-                msg2.linear.x = 0.2;
-            }
-            */
             msg2.linear.x = 0.2;
             msg2.angular.z = 0.0;
         }
     }
-    else {
+    else
+    {
         ROS_INFO("\nNO GOAL FOUND\n");
         msg2.angular.z = 0.5;
-
     }
     vel_pub_.publish(msg2);
-
 }
 
-} // ball_and_goal
+}  // namespace ball_and_goal_bica
 

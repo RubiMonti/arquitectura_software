@@ -85,7 +85,19 @@ target_link_libraries(ball_and_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 roslint_cpp(
- src/find_ball_node.cpp
+  src/ball_and_goal/FindBlueGoal.cpp
+  src/ball_and_goal/FindYellowGoal.cpp
+  src/ball_and_goal/FindBall.cpp
+  src/ball_and_goal/Turn.cpp
+  include/ball_and_goal/FindBlueGoal.cpp
+  include/ball_and_goal/FindYellowGoal.cpp
+  include/ball_and_goal/FindBall.cpp
+  include/ball_and_goal/Turn.cpp
+  src/ball_and_goal_node.cpp
+  src/find_blue_goal_node.cpp
+  src/find_yellow_goal_node.cpp
+  src/find_ball_node.cpp
+  src/turn_node.cpp
 )
 
 
