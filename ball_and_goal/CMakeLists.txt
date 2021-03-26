@@ -31,7 +31,7 @@ catkin_package(
   tf2_sensor_msgs
 )
 
-find_package(OpenCV)
+find_package(OpenCV 4.5.1 REQUIRED)
 include_directories(
   include
   fsm
@@ -42,6 +42,7 @@ include_directories(
 
 link_directories(
 	${PCL_LIBRARY_DIRS}
+  ${OpenCV_LINK_DIRS}
 )
 
 add_library(${PROJECT_NAME}
@@ -64,43 +65,36 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 
 add_executable(find_ball_node src/find_ball_node.cpp src/ball_and_goal/FindBall.cpp)
 add_dependencies(find_ball_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(find_ball_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(find_ball_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 add_executable(turn_node src/turn_node.cpp src/ball_and_goal/Turn.cpp)
 add_dependencies(turn_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(turn_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(turn_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(find_yellow_goal_node src/find_yellow_goal_node.cpp src/ball_and_goal/FindYellowGoal.cpp)
 add_dependencies(find_yellow_goal_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(find_yellow_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(find_yellow_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(find_blue_goal_node src/find_blue_goal_node.cpp src/ball_and_goal/FindBlueGoal.cpp)
 add_dependencies(find_blue_goal_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(find_blue_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(find_blue_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(ball_and_goal_node src/ball_and_goal_node.cpp src/ball_and_goal/BallAndGoalBica.cpp)
 add_dependencies(ball_and_goal_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(ball_and_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(ball_and_goal_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 roslint_cpp(
-  src/ball_and_goal/FindBlueGoal.cpp
-  src/ball_and_goal/FindYellowGoal.cpp
-  src/ball_and_goal/FindBall.cpp
-  src/ball_and_goal/Turn.cpp
-  include/ball_and_goal/FindBlueGoal.h
-  include/ball_and_goal/FindYellowGoal.h
-  include/ball_and_goal/FindBall.h
-  include/ball_and_goal/Turn.h
-  src/ball_and_goal_node.cpp
-  src/find_blue_goal_node.cpp
-  src/find_yellow_goal_node.cpp
-  src/find_ball_node.cpp
-  src/turn_node.cpp
+ src/find_ball_node.cpp
+ src/find_blue_goal_node.cpp
+ src/find_yellow_goal_node.cpp
+ src/turn_node.cpp
+ src/ball_and_goal_node.cpp
+ src/ball_and_goal/FindBall.cpp include/ball_and_goal/FindBall.h
+ src/ball_and_goal/FindBlueGoal.cpp include/ball_and_goal/FindBlueGoal.h
+ src/ball_and_goal/FindYellowGoal.cpp include/ball_and_goal/FindYellowGoal.h
+ src/ball_and_goal/Turn.cpp include/ball_and_goal/Turn.h
+ src/ball_and_goal/BallAndGoalBica.cpp include/ball_and_goal/BallAndGoalBica.h
+
 )
-
-
-
-
-
