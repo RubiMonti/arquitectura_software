@@ -89,10 +89,10 @@ roslint_cpp(
   src/ball_and_goal/FindYellowGoal.cpp
   src/ball_and_goal/FindBall.cpp
   src/ball_and_goal/Turn.cpp
-  include/ball_and_goal/FindBlueGoal.cpp
-  include/ball_and_goal/FindYellowGoal.cpp
-  include/ball_and_goal/FindBall.cpp
-  include/ball_and_goal/Turn.cpp
+  include/ball_and_goal/FindBlueGoal.h
+  include/ball_and_goal/FindYellowGoal.h
+  include/ball_and_goal/FindBall.h
+  include/ball_and_goal/Turn.h
   src/ball_and_goal_node.cpp
   src/find_blue_goal_node.cpp
   src/find_yellow_goal_node.cpp
