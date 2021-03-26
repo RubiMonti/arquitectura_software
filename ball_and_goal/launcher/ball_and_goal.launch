@@ -6,7 +6,7 @@
     <node pkg="ball_and_goal" type="find_ball_node" name="go_ball" /> 
 
     
-    <node pkg="ball_and_goal" type="ball_and_goal_node" name="ball_and_goal_bica" /> 
+    <node pkg="ball_and_goal" type="ball_and_goal_node" name="ball_and_goal_bica" output="screen"/> 
 
 
 </launch>
