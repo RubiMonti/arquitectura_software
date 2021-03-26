@@ -46,8 +46,22 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 #include <std_msgs/Float32.h>
+#include "std_msgs/Bool.h"
 
 #include <string>
+
+
+#include "tf2/transform_datatypes.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "tf2/LinearMath/Transform.h"
+#include "geometry_msgs/TransformStamped.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2/convert.h"
+
+
+
+
 
 namespace ball_and_goal_bica
 {
@@ -57,7 +71,7 @@ class FindBall : public bica::Component
 public:
     FindBall();
     void imageCb(const sensor_msgs::Image::ConstPtr& msg);
-    double publish_detection(float x, float y);
+    void publish_detection(float x, float y);
     void step();
 
 protected:
@@ -70,6 +84,10 @@ protected:
     int x_ = 0;
     int y_ = 0;
     int counter_ = 0;
+
+    tf2_ros::Buffer buffer_;
+    tf2_ros::TransformListener listener_;
+    tf2_ros::TransformBroadcaster broadcaster;
 };
 
 }  // namespace ball_and_goal_bica

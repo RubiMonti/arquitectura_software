@@ -31,7 +31,7 @@ catkin_package(
   tf2_sensor_msgs
 )
 
-find_package(OpenCV 4.5.1 REQUIRED)
+find_package(OpenCV 4.2.0 REQUIRED)
 include_directories(
   include
   fsm
@@ -47,7 +47,7 @@ link_directories(
 
 add_library(${PROJECT_NAME}
    src/${PROJECT_NAME}/FindBall.cpp
-   #src/${PROJECT_NAME}/FindYellowGoal.cpp
+   src/${PROJECT_NAME}/FindYellowGoal.cpp
    src/${PROJECT_NAME}/FindBlueGoal.cpp
    src/${PROJECT_NAME}/Turn.cpp
    src/${PROJECT_NAME}/BallAndGoalBica.cpp
@@ -55,11 +55,6 @@ add_library(${PROJECT_NAME}
 
    fsm/ball_and_goal_bica.cpp
  )
-
-
-  # Hay que comprobar si el nombre de los nodos puestos en este CMakeList 
-  # concuerdan con los puestos en bica. 
-
 
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
