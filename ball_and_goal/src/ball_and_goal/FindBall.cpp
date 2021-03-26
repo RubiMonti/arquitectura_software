@@ -115,7 +115,6 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 
 void
 FindBall::step(){
-    ROS_INFO("\nSe ejecuta el step\n");
     //if(!isActive()){
     //    return;
     //}
