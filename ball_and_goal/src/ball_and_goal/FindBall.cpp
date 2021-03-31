@@ -75,20 +75,22 @@ FindBall::publish_detection(float x, float y)
     tf2::Stamped<tf2::Transform> odom2bf;
     tf2::fromMsg(odom2bf_msg, odom2bf);
 
-    tf2::Stamped<tf2::Transform> bf2object;
-    bf2object.setOrigin(tf2::Vector3(x, y ,0));
-    bf2object.setRotation(tf2::Quaternion(0, 0, 0, 1));
+    tf2::Stamped<tf2::Transform> bf2ball;
+    bf2ball.setOrigin(tf2::Vector3(x, y ,0));
+    bf2ball.setRotation(tf2::Quaternion(0, 0, 0, 1));
 
-    tf2::Transform odom2object = odom2bf * bf2object;
+    tf2::Transform odom2ball = odom2bf * bf2ball;
 
-    geometry_msgs::TransformStamped odom2object_msg;
-    odom2object_msg.header.stamp = ros::Time::now();
-    odom2object_msg.header.frame_id = "odom";
-    odom2object_msg.child_frame_id = "ball";
+    geometry_msgs::TransformStamped odom2ball_msg;
+    odom2ball_msg.header.stamp = ros::Time::now();
+    odom2ball_msg.header.frame_id = "odom";
+    odom2ball_msg.child_frame_id = "ball";
 
-    odom2object_msg.transform = tf2::toMsg(odom2object);
-
-    broadcaster.sendTransform(odom2object_msg);
+    odom2ball_msg.transform = tf2::toMsg(odom2ball);
+    
+    ROS_INFO("Hola");
+    ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2ball_msg.transform.translation.x, odom2ball_msg.transform.translation.y);
+    broadcaster.sendTransform(odom2ball_msg);
 
     //posicion del objeto con respecto a base_footprint
     geometry_msgs::TransformStamped bf2obj_2_msg;
@@ -154,10 +156,9 @@ FindBall::step()
 
     int pos_x, pos_y;
     float x, y;
-    ROS_INFO("\n\n\n%d\n\n\nCOUNTERRRRRRRRRRRR: ", counter_);
     if (counter_ > 0)
     {
-        ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
+        // ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
         pos_x = x_ / counter_;
         pos_y = y_ / counter_;
         msg2.angular.z = 0.2;
@@ -185,7 +186,7 @@ FindBall::step()
     }
     else
     {
-        ROS_INFO("\nNO BALL FOUND\n");
+        // ROS_INFO("\nNO BALL FOUND\n");
         msg2.angular.z = 0.5;
     }
     vel_pub_.publish(msg2);
