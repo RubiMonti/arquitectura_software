@@ -88,19 +88,20 @@ FindYellowGoal::publish_detection(float x, float y)
 
     odom2yellow_goal_msg.transform = tf2::toMsg(odom2yellow_goal);
 
+    odom2yellow_goal_msg_ = odom2yellow_goal_msg;
     broadcaster.sendTransform(odom2yellow_goal_msg);
-    ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2yellow_goal_msg.transform.translation.x, odom2yellow_goal_msg.transform.translation.y);
+    // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2yellow_goal_msg.transform.translation.x, odom2yellow_goal_msg.transform.translation.y);
 
     //posicion del objeto con respecto a base_footprint
-    geometry_msgs::TransformStamped bf2obj_2_msg;
+    geometry_msgs::TransformStamped bf2yellow_goal_2_msg;
     try {
-        bf2obj_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
+        bf2yellow_goal_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
     } catch (std::exception & e)
     {
         return;
     }
 
-    angle = atan2(bf2obj_2_msg.transform.translation.y, bf2obj_2_msg.transform.translation.x);
+    angle = atan2(bf2yellow_goal_2_msg.transform.translation.y, bf2yellow_goal_2_msg.transform.translation.x);
 }
 
 void
@@ -145,6 +146,8 @@ void
 FindYellowGoal::step()
 {
     if(!isActive()){
+        ROS_INFO("Mandando transformada amarilla");
+        broadcaster.sendTransform(odom2yellow_goal_msg_);
         return;
     }
     geometry_msgs::Twist msg2;
@@ -153,6 +156,7 @@ FindYellowGoal::step()
     if (counter_ > 500)
     {
         // ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
+        ROS_INFO("Counter: %d\n", counter_);
         pos_x = x_ / counter_;
         pos_y = y_ / counter_;
         msg2.angular.z = 0.2;
@@ -172,7 +176,7 @@ FindYellowGoal::step()
             msg2.angular.z = -0.1;
         }
         
-        if(counter_ >= 2500){
+        if(counter_ >= 3500){
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
             publish_detection(0.5,0);
@@ -180,7 +184,7 @@ FindYellowGoal::step()
     }
     else
     {
-        ROS_INFO("\nNO GOAL FOUND\n");
+        // ROS_INFO("\nNO GOAL FOUND\n");
         msg2.angular.z = 0.5;
     }
     vel_pub_.publish(msg2);

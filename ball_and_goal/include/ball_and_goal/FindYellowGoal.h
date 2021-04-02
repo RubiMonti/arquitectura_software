@@ -82,6 +82,7 @@ private:
     tf2_ros::Buffer buffer_;
     tf2_ros::TransformListener listener_;
     tf2_ros::TransformBroadcaster broadcaster;
+    geometry_msgs::TransformStamped odom2yellow_goal_msg_;
 };
 
 }  // namespace ball_and_goal_bica

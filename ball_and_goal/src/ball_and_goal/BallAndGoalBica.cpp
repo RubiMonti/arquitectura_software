@@ -73,9 +73,27 @@ BallAndGoalBica::Turn_2_Go_yellow()
 }
 
 void
-BallAndGoalBica::Go_yellow_code_iterative()
+BallAndGoalBica::Go_yellow_code_once()
 {
     ROS_INFO("STATE: GO_YELLOW");
+}
+
+void
+BallAndGoalBica::Go_blue_code_once()
+{
+    ROS_INFO("STATE: GO_BLUE");
+}
+
+void
+BallAndGoalBica::Go_ball_code_once()
+{
+    ROS_INFO("STATE: GO_BALL");
+}
+
+void
+BallAndGoalBica::Turn_code_once()
+{
+    ROS_INFO("STATE: TURN");
 }
 
 }  // ball_and_goal
