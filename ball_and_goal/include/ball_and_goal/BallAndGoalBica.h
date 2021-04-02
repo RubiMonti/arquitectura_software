@@ -55,7 +55,10 @@ public:
 	bool Go_blue_2_Go_ball();
 	bool Go_yellow_2_Go_blue();
 
-    void Go_yellow_code_iterative();
+    void Go_yellow_code_once();
+    void Go_blue_code_once();
+    void Go_ball_code_once();
+    void Turn_code_once();
 
 private:
 
