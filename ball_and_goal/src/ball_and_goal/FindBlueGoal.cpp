@@ -58,6 +58,17 @@ FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_)
 {
     image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindBlueGoal::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+    sub_laser_ = nh_.subscribe("/scan", 1, &FindBlueGoal::laserCallback, this);
+}
+
+void 
+FindBlueGoal::laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+    if(!isActive()){
+        return;
+    }
+    dist_centro_ = msg->ranges[msg->ranges.size()/2];
+    ROS_INFO("Distancia medida en el centro: %f\n", dist_centro_);
 }
 
 void
@@ -88,19 +99,20 @@ FindBlueGoal::publish_detection(float x, float y)
 
     odom2blue_goal_msg.transform = tf2::toMsg(odom2blue_goal);
 
+    odom2blue_goal_msg_ = odom2blue_goal_msg;
     broadcaster.sendTransform(odom2blue_goal_msg);
-    ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2blue_goal_msg.transform.translation.x, odom2blue_goal_msg.transform.translation.y);
+    // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2blue_goal_msg.transform.translation.x, odom2blue_goal_msg.transform.translation.y);
 
     //posicion del objeto con respecto a base_footprint
-    geometry_msgs::TransformStamped bf2obj_2_msg;
+    geometry_msgs::TransformStamped bf2blue_goal_2_msg;
     try {
-        bf2obj_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
+        bf2blue_goal_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
     } catch (std::exception & e)
     {
         return;
     }
 
-    angle = atan2(bf2obj_2_msg.transform.translation.y, bf2obj_2_msg.transform.translation.x);
+    angle = atan2(bf2blue_goal_2_msg.transform.translation.y, bf2blue_goal_2_msg.transform.translation.x);
 }
 
 void
@@ -145,6 +157,8 @@ void
 FindBlueGoal::step()
 {
     if(!isActive()){
+        // ROS_INFO("Mandando transformada azul");
+        broadcaster.sendTransform(odom2blue_goal_msg_);
         return;
     }
     geometry_msgs::Twist msg2;
@@ -153,29 +167,37 @@ FindBlueGoal::step()
     if (counter_ > 500)
     {
         // ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
+        // ROS_INFO("Counter: %d\n", counter_);
         pos_x = x_ / counter_;
         pos_y = y_ / counter_;
         msg2.angular.z = 0.2;
-        if (pos_x >= 300 && pos_x <= 340)
+        if (dist_centro_ < 0.4)
         {
-            msg2.linear.x = 0.2;
-            msg2.angular.z = 0.0;
-        }
-        else if(pos_x >= 270 && pos_x <= 300)
-        {
-            msg2.linear.x = 0.1;
-            msg2.angular.z = 0.1;
-        }
-        else if(pos_x >= 340 && pos_x <= 370)
-        {
-            msg2.linear.x = 0.1;
-            msg2.angular.z = -0.1;
-        }
-        
-        if(counter_ >= 2500){
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
-            publish_detection(0.5,0);
+        }
+        else
+        {
+             if (pos_x >= 300 && pos_x <= 340)
+            {
+                msg2.linear.x = 0.2;
+                msg2.angular.z = 0.0;
+            }
+            else if(pos_x >= 270 && pos_x <= 300)
+            {
+                msg2.linear.x = 0.1;
+                msg2.angular.z = 0.1;
+            }
+            else if(pos_x >= 340 && pos_x <= 370)
+            {
+                msg2.linear.x = 0.1;
+                msg2.angular.z = -0.1;
+            }
+            if(counter_ >= 3500){
+                // msg2.linear.x = 0.0;
+                // msg2.angular.z = 0.0;
+                publish_detection(0.5,0);
+            }
         }
     }
     else

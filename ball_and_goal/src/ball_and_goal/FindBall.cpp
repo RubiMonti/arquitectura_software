@@ -88,20 +88,20 @@ FindBall::publish_detection(float x, float y)
 
     odom2ball_msg.transform = tf2::toMsg(odom2ball);
     
-    ROS_INFO("Hola");
-    ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2ball_msg.transform.translation.x, odom2ball_msg.transform.translation.y);
+    // ROS_INFO("Hola");
+    // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2ball_msg.transform.translation.x, odom2ball_msg.transform.translation.y);
     broadcaster.sendTransform(odom2ball_msg);
 
     //posicion del objeto con respecto a base_footprint
-    geometry_msgs::TransformStamped bf2obj_2_msg;
+    geometry_msgs::TransformStamped bf2ball_2_msg;
     try {
-        bf2obj_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
+        bf2ball_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
     } catch (std::exception & e)
     {
         return;
     }
 
-    angle = atan2(bf2obj_2_msg.transform.translation.y, bf2obj_2_msg.transform.translation.x);
+    angle = atan2(bf2ball_2_msg.transform.translation.y, bf2ball_2_msg.transform.translation.x);
 }
 
 

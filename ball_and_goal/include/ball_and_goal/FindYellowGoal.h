@@ -42,6 +42,7 @@
 #include "bica/Component.h"
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
+#include "sensor_msgs/LaserScan.h"
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
@@ -65,6 +66,7 @@ class FindYellowGoal : public bica::Component
 public:
     FindYellowGoal();
     void imageCb(const sensor_msgs::Image::ConstPtr& msg);
+    void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg);
     void publish_detection(float x, float y);
     void step();
 
@@ -78,10 +80,14 @@ private:
     int x_ = 0;
     int y_ = 0;
     int counter_ = 0;
+    float dist_centro_;
+
+    ros::Subscriber sub_laser_;
 
     tf2_ros::Buffer buffer_;
     tf2_ros::TransformListener listener_;
     tf2_ros::TransformBroadcaster broadcaster;
+    geometry_msgs::TransformStamped odom2yellow_goal_msg_;
 };
 
 }  // namespace ball_and_goal_bica
