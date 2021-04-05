@@ -52,7 +52,7 @@
 
 #include "tf2/transform_datatypes.h"
 #include "tf2_ros/transform_listener.h"
-#include "tf2_ros/transform_broadcaster.h"
+#include "tf2_ros/static_transform_broadcaster.h"
 #include "tf2/LinearMath/Transform.h"
 #include "geometry_msgs/TransformStamped.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.h"
@@ -86,8 +86,7 @@ private:
 
     tf2_ros::Buffer buffer_;
     tf2_ros::TransformListener listener_;
-    tf2_ros::TransformBroadcaster broadcaster;
-    geometry_msgs::TransformStamped odom2yellow_goal_msg_;
+    tf2_ros::StaticTransformBroadcaster broadcaster_;
 };
 
 }  // namespace ball_and_goal_bica
