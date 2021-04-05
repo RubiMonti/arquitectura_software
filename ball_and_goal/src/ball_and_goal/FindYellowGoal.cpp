@@ -59,13 +59,13 @@ FindYellowGoal::FindYellowGoal() : it_(nh_) , buffer_() , listener_(buffer_)
     image_sub_ = it_.subscribe("/camera/rgb/image_raw", 1, &FindYellowGoal::imageCb, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
     sub_laser_ = nh_.subscribe("/scan", 1, &FindYellowGoal::laserCallback, this);
-
 }
 
-void 
+void
 FindYellowGoal::laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
     dist_centro_ = msg->ranges[msg->ranges.size()/2];
@@ -76,9 +76,11 @@ FindYellowGoal::publish_detection(float x, float y)
 {
     double angle;
     geometry_msgs::TransformStamped odom2bf_msg;
-    try{
+    try
+    {
         odom2bf_msg = buffer_.lookupTransform("odom", "base_footprint", ros::Time(0));
-    }   catch (std::exception & e)
+    }
+    catch (std::exception & e)
     {
         return;
     }
@@ -87,7 +89,7 @@ FindYellowGoal::publish_detection(float x, float y)
     tf2::fromMsg(odom2bf_msg, odom2bf);
 
     tf2::Stamped<tf2::Transform> bf2yellow_goal;
-    bf2yellow_goal.setOrigin(tf2::Vector3(x, y ,0));
+    bf2yellow_goal.setOrigin(tf2::Vector3(x, y, 0));
     bf2yellow_goal.setRotation(tf2::Quaternion(0, 0, 0, 1));
 
     tf2::Transform odom2yellow_goal = odom2bf * bf2yellow_goal;
@@ -100,13 +102,13 @@ FindYellowGoal::publish_detection(float x, float y)
     odom2yellow_goal_msg.transform = tf2::toMsg(odom2yellow_goal);
 
     broadcaster_.sendTransform(odom2yellow_goal_msg);
-
 }
 
 void
 FindYellowGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
 
@@ -144,7 +146,8 @@ FindYellowGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 void
 FindYellowGoal::step()
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
     geometry_msgs::Twist msg2;
@@ -154,9 +157,11 @@ FindYellowGoal::step()
     double angle;
 
     geometry_msgs::TransformStamped bf2yellow_goal_2_msg;
-    try {
-        bf2yellow_goal_2_msg = buffer_.lookupTransform( "base_footprint", "yellow_goal", ros::Time(0));
-    } catch (std::exception & e)
+    try
+    {
+        bf2yellow_goal_2_msg = buffer_.lookupTransform("base_footprint", "yellow_goal", ros::Time(0));
+    }
+    catch (std::exception & e)
     {
         found = false;
     }
@@ -173,11 +178,11 @@ FindYellowGoal::step()
         {
             msg2.angular.z = 0.5;
         }
-        else if(angle > 0.1)
+        else if (angle > 0.1)
         {
             msg2.angular.z = 0.2;
         }
-        else if(angle < -0.1)
+        else if (angle < -0.1)
         {
             msg2.angular.z = -0.2;
         }
@@ -202,7 +207,7 @@ FindYellowGoal::step()
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
 
-            publish_detection(0.4,0);
+            publish_detection(0.4, 0);
         }
         else
         {
@@ -211,14 +216,14 @@ FindYellowGoal::step()
                 msg2.linear.x = 0.2;
                 msg2.angular.z = 0.0;
             }
-            else if(pos_x >= 270 && pos_x <= 300)
+            else if (pos_x >= 270 && pos_x <= 300)
             {
                 msg2.linear.x = 0.2;
                 msg2.angular.z = 0.1;
             }
-            else if(pos_x >= 340 && pos_x <= 370)
+            else if (pos_x >= 340 && pos_x <= 370)
             {
-                msg2.linear.x = 0.25;
+                msg2.linear.x = 0.3;
                 msg2.angular.z = -0.1;
             }
         }
@@ -229,4 +234,4 @@ FindYellowGoal::step()
     }
     vel_pub_.publish(msg2);
 }
-} // namespace ball_and_goal_bica
+}  //  namespace ball_and_goal_bica
