@@ -165,39 +165,35 @@ FindBlueGoal::step()
 
     geometry_msgs::TransformStamped bf2blue_goal_2_msg;
     try {
-        bf2blue_goal_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
+        bf2blue_goal_2_msg = buffer_.lookupTransform( "base_footprint", "blue_goal", ros::Time(0));
     } catch (std::exception & e)
     {
         found = false;
     }
 
-    ROS_INFO("La variable found: %d", found);
-
     if (found)
     {
         angle = atan2(bf2blue_goal_2_msg.transform.translation.y, bf2blue_goal_2_msg.transform.translation.x);
 
-        ROS_INFO("ANGULOOO: %f", angle);
-
-        if (angle < -5)
-        {
-            msg2.angular.z = 0.5;
-        }
-        else if (angle > 5)
+        if (angle < -1)
         {
             msg2.angular.z = -0.5;
         }
-        else if(angle > 1)
+        else if (angle > 1)
         {
-            msg2.angular.z = -0.2;
+            msg2.angular.z = 0.5;
         }
-        else if(angle < -1)
+        else if(angle > 0.1)
         {
             msg2.angular.z = 0.2;
         }
+        else if(angle < -0.1)
+        {
+            msg2.angular.z = -0.2;
+        }
         else
         {
-            msg2.linear.x = 0.4;
+            msg2.linear.x = 0.25;
             if (dist_centro_ < 0.4)
             {
                 msg2.linear.x = 0.0;
@@ -217,7 +213,7 @@ FindBlueGoal::step()
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
 
-            publish_detection(0.5,0);
+            publish_detection(0.4,0);
         }
         else
         {
@@ -228,12 +224,12 @@ FindBlueGoal::step()
             }
             else if(pos_x >= 270 && pos_x <= 300)
             {
-                msg2.linear.x = 0.1;
+                msg2.linear.x = 0.2;
                 msg2.angular.z = 0.1;
             }
             else if(pos_x >= 340 && pos_x <= 370)
             {
-                msg2.linear.x = 0.1;
+                msg2.linear.x = 0.25;
                 msg2.angular.z = -0.1;
             }
         }
