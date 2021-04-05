@@ -90,7 +90,7 @@ FindBall::publish_detection(float x, float y)
     
     // ROS_INFO("Hola");
     // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2ball_msg.transform.translation.x, odom2ball_msg.transform.translation.y);
-    broadcaster.sendTransform(odom2ball_msg);
+    broadcaster_.sendTransform(odom2ball_msg);
 
     //posicion del objeto con respecto a base_footprint
     geometry_msgs::TransformStamped bf2ball_2_msg;
