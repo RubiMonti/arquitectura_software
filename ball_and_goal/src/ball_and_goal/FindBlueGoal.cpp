@@ -61,10 +61,11 @@ FindBlueGoal::FindBlueGoal() : it_(nh_) , buffer_() , listener_(buffer_)
     sub_laser_ = nh_.subscribe("/scan", 1, &FindBlueGoal::laserCallback, this);
 }
 
-void 
+void
 FindBlueGoal::laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
     dist_centro_ = msg->ranges[msg->ranges.size()/2];
@@ -75,9 +76,11 @@ void
 FindBlueGoal::publish_detection(float x, float y)
 {
     geometry_msgs::TransformStamped odom2bf_msg;
-    try{
+    try
+    {
         odom2bf_msg = buffer_.lookupTransform("odom", "base_footprint", ros::Time(0));
-    }   catch (std::exception & e)
+    }
+    catch (std::exception & e)
     {
         return;
     }
@@ -86,7 +89,7 @@ FindBlueGoal::publish_detection(float x, float y)
     tf2::fromMsg(odom2bf_msg, odom2bf);
 
     tf2::Stamped<tf2::Transform> bf2blue_goal;
-    bf2blue_goal.setOrigin(tf2::Vector3(x, y ,0));
+    bf2blue_goal.setOrigin(tf2::Vector3(x, y, 0));
     bf2blue_goal.setRotation(tf2::Quaternion(0, 0, 0, 1));
 
     tf2::Transform odom2blue_goal = odom2bf * bf2blue_goal;
@@ -99,24 +102,13 @@ FindBlueGoal::publish_detection(float x, float y)
     odom2blue_goal_msg.transform = tf2::toMsg(odom2blue_goal);
 
     broadcaster_.sendTransform(odom2blue_goal_msg);
-    // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2blue_goal_msg.transform.translation.x, odom2blue_goal_msg.transform.translation.y);
-
-    // //posicion del objeto con respecto a base_footprint
-    // geometry_msgs::TransformStamped bf2blue_goal_2_msg;
-    // try {
-    //     bf2blue_goal_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
-    // } catch (std::exception & e)
-    // {
-    //     return;
-    // }
-
-    // angle = atan2(bf2blue_goal_2_msg.transform.translation.y, bf2blue_goal_2_msg.transform.translation.x);
 }
 
 void
 FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
 
@@ -154,7 +146,8 @@ FindBlueGoal::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 void
 FindBlueGoal::step()
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
     geometry_msgs::Twist msg2;
@@ -164,9 +157,11 @@ FindBlueGoal::step()
     double angle;
 
     geometry_msgs::TransformStamped bf2blue_goal_2_msg;
-    try {
-        bf2blue_goal_2_msg = buffer_.lookupTransform( "base_footprint", "blue_goal", ros::Time(0));
-    } catch (std::exception & e)
+    try
+    {
+        bf2blue_goal_2_msg = buffer_.lookupTransform("base_footprint", "blue_goal", ros::Time(0));
+    }
+    catch (std::exception & e)
     {
         found = false;
     }
@@ -183,11 +178,11 @@ FindBlueGoal::step()
         {
             msg2.angular.z = 0.5;
         }
-        else if(angle > 0.1)
+        else if (angle > 0.1)
         {
             msg2.angular.z = 0.2;
         }
-        else if(angle < -0.1)
+        else if (angle < -0.1)
         {
             msg2.angular.z = -0.2;
         }
@@ -200,9 +195,7 @@ FindBlueGoal::step()
                 msg2.angular.z = 0.0;
             }
         }
-
     }
-
     else if (!found && counter_ > 500)
     {
         pos_x = x_ / counter_;
@@ -213,7 +206,7 @@ FindBlueGoal::step()
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
 
-            publish_detection(0.4,0);
+            publish_detection(0.4, 0);
         }
         else
         {
@@ -222,12 +215,12 @@ FindBlueGoal::step()
                 msg2.linear.x = 0.2;
                 msg2.angular.z = 0.0;
             }
-            else if(pos_x >= 270 && pos_x <= 300)
+            else if (pos_x >= 270 && pos_x <= 300)
             {
                 msg2.linear.x = 0.2;
                 msg2.angular.z = 0.1;
             }
-            else if(pos_x >= 340 && pos_x <= 370)
+            else if (pos_x >= 340 && pos_x <= 370)
             {
                 msg2.linear.x = 0.25;
                 msg2.angular.z = -0.1;

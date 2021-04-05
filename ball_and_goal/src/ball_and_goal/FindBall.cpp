@@ -65,9 +65,11 @@ FindBall::publish_detection(float x, float y)
 {
     double angle;
     geometry_msgs::TransformStamped odom2bf_msg;
-    try{
+    try
+    {
         odom2bf_msg = buffer_.lookupTransform("odom", "base_footprint", ros::Time(0));
-    }   catch (std::exception & e)
+    }
+    catch (std::exception & e)
     {
         return;
     }
@@ -76,7 +78,7 @@ FindBall::publish_detection(float x, float y)
     tf2::fromMsg(odom2bf_msg, odom2bf);
 
     tf2::Stamped<tf2::Transform> bf2ball;
-    bf2ball.setOrigin(tf2::Vector3(x, y ,0));
+    bf2ball.setOrigin(tf2::Vector3(x, y, 0));
     bf2ball.setRotation(tf2::Quaternion(0, 0, 0, 1));
 
     tf2::Transform odom2ball = odom2bf * bf2ball;
@@ -87,16 +89,16 @@ FindBall::publish_detection(float x, float y)
     odom2ball_msg.child_frame_id = "ball";
 
     odom2ball_msg.transform = tf2::toMsg(odom2ball);
-    
-    // ROS_INFO("Hola");
-    // ROS_INFO("Los valores de la translacion son: %f, %f.\n", odom2ball_msg.transform.translation.x, odom2ball_msg.transform.translation.y);
+
     broadcaster_.sendTransform(odom2ball_msg);
 
-    //posicion del objeto con respecto a base_footprint
+    // Posicion del objeto con respecto a base_footprint
     geometry_msgs::TransformStamped bf2ball_2_msg;
-    try {
-        bf2ball_2_msg = buffer_.lookupTransform( "base_footprint", "ball", ros::Time(0));
-    } catch (std::exception & e)
+    try
+    {
+        bf2ball_2_msg = buffer_.lookupTransform("base_footprint", "ball", ros::Time(0));
+    }
+    catch (std::exception & e)
     {
         return;
     }
@@ -108,7 +110,8 @@ FindBall::publish_detection(float x, float y)
 void
 FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
 
@@ -149,7 +152,8 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
 void
 FindBall::step()
 {
-    if(!isActive()){
+    if (!isActive())
+    {
         return;
     }
     geometry_msgs::Twist msg2;
@@ -167,21 +171,22 @@ FindBall::step()
             msg2.linear.x = 0.2;
             msg2.angular.z = 0.0;
         }
-        else if(pos_x >= 270 && pos_x <= 300)
+        else if (pos_x >= 270 && pos_x <= 300)
         {
             msg2.linear.x = 0.1;
             msg2.angular.z = 0.1;
         }
-        else if(pos_x >= 340 && pos_x <= 370)
+        else if (pos_x >= 340 && pos_x <= 370)
         {
             msg2.linear.x = 0.1;
             msg2.angular.z = -0.1;
         }
-        
-        if(counter_ >= 1900){
+
+        if (counter_ >= 1900)
+        {
             msg2.linear.x = 0.0;
             msg2.angular.z = 0.0;
-            publish_detection(0.5,0);
+            publish_detection(0.5, 0);
         }
     }
     else
@@ -190,8 +195,6 @@ FindBall::step()
         msg2.angular.z = 0.5;
     }
     vel_pub_.publish(msg2);
-
-    
 }
 }  // namespace ball_and_goal_bica
 
