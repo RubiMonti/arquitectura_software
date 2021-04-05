@@ -196,7 +196,6 @@ FindYellowGoal::step()
             }
         }
     }
-
     else if (!found && counter_ > 500)
     {
         pos_x = x_ / counter_;
