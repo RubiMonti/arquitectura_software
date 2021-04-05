@@ -67,7 +67,7 @@ private:
     ros::Subscriber obstacle_sub_;
     bool is_obstacle_;
 };
+}  //  namespace ball_and_goal_bica
 
-}  // namespace ball_and_goal_bica
 
 #endif  // BALL_AND_GOAL_BALLANDGOALBICA_H

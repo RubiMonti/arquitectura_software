@@ -148,7 +148,6 @@ FindBall::imageCb(const sensor_msgs::Image::ConstPtr& msg)
     }
 }
 
-
 void
 FindBall::step()
 {
@@ -162,7 +161,6 @@ FindBall::step()
     float x, y;
     if (counter_ > 0)
     {
-        // ROS_INFO("\nGoal at %d %d\n", x_ / counter_ , y_ / counter_);
         pos_x = x_ / counter_;
         pos_y = y_ / counter_;
         msg2.angular.z = 0.2;
@@ -181,7 +179,6 @@ FindBall::step()
             msg2.linear.x = 0.1;
             msg2.angular.z = -0.1;
         }
-
         if (counter_ >= 1900)
         {
             msg2.linear.x = 0.0;
@@ -191,7 +188,6 @@ FindBall::step()
     }
     else
     {
-        // ROS_INFO("\nNO BALL FOUND\n");
         msg2.angular.z = 0.5;
     }
     vel_pub_.publish(msg2);

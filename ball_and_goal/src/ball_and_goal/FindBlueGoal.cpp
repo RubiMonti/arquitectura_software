@@ -210,20 +210,20 @@ FindBlueGoal::step()
         }
         else
         {
-             if (pos_x >= 300 && pos_x <= 340)
+            if (pos_x >= 300 && pos_x <= 340)
             {
                 msg2.linear.x = 0.2;
                 msg2.angular.z = 0.0;
             }
             else if (pos_x >= 270 && pos_x <= 300)
             {
-                msg2.linear.x = 0.2;
-                msg2.angular.z = 0.1;
+                msg2.linear.x = 0.5;
+                msg2.angular.z = 0.0;
             }
             else if (pos_x >= 340 && pos_x <= 370)
             {
-                msg2.linear.x = 0.25;
-                msg2.angular.z = -0.1;
+                msg2.linear.x = 0.5;
+                msg2.angular.z = 0.0;
             }
         }
     }

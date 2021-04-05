@@ -222,7 +222,7 @@ FindYellowGoal::step()
             }
             else if (pos_x >= 340 && pos_x <= 370)
             {
-                msg2.linear.x = 0.25;
+                msg2.linear.x = 0.3;
                 msg2.angular.z = -0.1;
             }
         }
