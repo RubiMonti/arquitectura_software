@@ -41,10 +41,10 @@
 
 # define MAX_TIME 30.0
 
-namespace ball_and_goal_bica 
+namespace ball_and_goal_bica
 {
 
-BallAndGoalBica::BallAndGoalBica() 
+BallAndGoalBica::BallAndGoalBica()
 {
 }
 
@@ -96,4 +96,4 @@ BallAndGoalBica::Turn_code_once()
     ROS_INFO("STATE: TURN");
 }
 
-}  // ball_and_goal
+}  //  namespace ball_and_goal_bica
