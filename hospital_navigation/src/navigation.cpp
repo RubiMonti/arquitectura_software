@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <ros/ros.h>
-#include <move_base_msgs/MoveBaseAction.h>
-#include <actionlib/client/simple_action_client.h>
+#include "ros/ros.h"
+#include "move_base_msgs/MoveBaseAction.h"
+#include "actionlib/client/simple_action_client.h"
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -42,7 +42,7 @@ void feedbackCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
 }
 
 int main(int argc, char** argv){
-    ros::init(argc, argv, "simple_navigation_goals");
+    ros::init(argc, argv, "navigation");
 
 
     //tell the action client that we want to spin a thread by default
@@ -67,10 +67,10 @@ int main(int argc, char** argv){
     goal.target_pose.header.stamp = ros::Time::now();
 
 
-
-    goal.target_pose.pose.position.x = 1.0;
-    goal.target_pose.pose.position.y = -3.0;
-    goal.target_pose.pose.orientation.w = 1.0;
+    // -------- COORDENADAS PARA LA HABITACION 1 ---------- //
+    goal.target_pose.pose.position.x = 3.83;
+    goal.target_pose.pose.position.y = 0.416;
+    goal.target_pose.pose.orientation.w = 0.0013;
 
 
 

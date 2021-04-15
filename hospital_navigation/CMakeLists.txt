@@ -3,6 +3,8 @@ project(hospital_navigation)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  actionlib
+  move_base_msgs
   rospy
   std_msgs
   roslint
@@ -12,7 +14,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
  
-  CATKIN_DEPENDS roscpp std_msgs kobuki_msgs sensor_msgs
+  CATKIN_DEPENDS roscpp actionlib move_base_msgs std_msgs kobuki_msgs sensor_msgs
+)
+
+include_directories(
+  #include
+  ${catkin_INCLUDE_DIRS} 
 )
 
 set(LINK_LIBS
