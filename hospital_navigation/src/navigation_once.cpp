@@ -18,7 +18,26 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-move_base_msgs::MoveBaseGoal goal;
+void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
+{
+    ROS_INFO("ARG = %s\n", arg);
+    if (!(strcasecmp(arg,"habitacion1")))
+        ROS_INFO("Mandando a habitacion 1\n");
+    else if (!(strcasecmp(arg,"habitacion2")))
+        ROS_INFO("Mandando a habitacion 2\n");
+    else if (!(strcasecmp(arg,"spawn")))
+        ROS_INFO("Mandando a spawn\n");
+    else if (!(strcasecmp(arg,"consulta1")))
+        ROS_INFO("Mandando a consulta 1\n");
+    else if (!(strcasecmp(arg,"consulta2")))
+        ROS_INFO("Mandando a consulta 2\n");
+    else if (!(strcasecmp(arg,"almacen1")))
+        ROS_INFO("Mandando a almacen 1\n");
+    else if (!(strcasecmp(arg,"almacen2")))
+        ROS_INFO("Mandando a almacen 2\n");
+    else
+        ROS_INFO("No se ha detectado nada\n");
+}
 
 void doneCb(const actionlib::SimpleClientGoalState& state,
 			const move_base_msgs::MoveBaseResultConstPtr& result)
@@ -26,6 +45,7 @@ void doneCb(const actionlib::SimpleClientGoalState& state,
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
 }
 
+/*
 void feedbackCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
 {
     double goal_x = goal.target_pose.pose.position.x;
@@ -40,18 +60,14 @@ void feedbackCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
 
     ROS_INFO("Distance to goal: %lf", dist);
 }
+*/
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "navigation");
 
-
-    //tell the action client that we want to spin a thread by default
+    move_base_msgs::MoveBaseGoal goal;
 
     MoveBaseClient ac("move_base", true);
-
-
-
-    //wait for the action server to come up
 
     while(!ac.waitForServer(ros::Duration(5.0))){
 
@@ -59,30 +75,19 @@ int main(int argc, char** argv){
 
     }
 
-
-    //we'll send a goal to the robot to move 1 meter forward
-
     goal.target_pose.header.frame_id = "map";
 
-    goal.target_pose.header.stamp = ros::Time::now();
-
-
+    set_goal(goal, argv[argc - 1]);
     // -------- COORDENADAS PARA LA HABITACION 1 ---------- //
     goal.target_pose.pose.position.x = 3.83;
     goal.target_pose.pose.position.y = 0.416;
     goal.target_pose.pose.orientation.w = 0.0013;
 
-
-
+    goal.target_pose.header.stamp = ros::Time::now();
     ROS_INFO("Sending goal");
-
-    ac.sendGoal(goal, doneCb, MoveBaseClient::SimpleActiveCallback(), feedbackCb);
-
-
+    ac.sendGoal(goal, doneCb);//, MoveBaseClient::SimpleActiveCallback(), feedbackCb);
 
     ac.waitForResult();
-
-
 
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
 
