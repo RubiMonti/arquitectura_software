@@ -27,8 +27,8 @@ set(LINK_LIBS
   ${catkin_LIBRARIES}
 )
 
-add_executable(navigation src/navigation.cpp)
-target_link_libraries(navigation ${catkin_LIBRARIES})
+add_executable(navigation_once src/navigation_once.cpp)
+target_link_libraries(navigation_once ${catkin_LIBRARIES})
 
 add_executable(navigation_kobuki src/navigation_kobuki.cpp)
 target_link_libraries(navigation_kobuki ${catkin_LIBRARIES})
