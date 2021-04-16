@@ -90,7 +90,7 @@ int main(int argc, char** argv){
 
     else
 
-        ROS_INFO("The base failed to move forward 1 meter for some reason");
+        ROS_INFO("The base failed to move towards the desired point for some reason");
 
 
 
