@@ -26,46 +26,44 @@ void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
     if (!(strcasecmp(arg,"habitacion1")))
     {
         ROS_INFO("Mandando a habitacion 1\n");
-        goal.target_pose.pose.position.x = 1.26;
-        goal.target_pose.pose.position.y = -8.79;
+        goal.target_pose.pose.position.x = -6.13;
+        goal.target_pose.pose.position.y = 8.2;
     }
     else if (!(strcasecmp(arg,"habitacion2")))
     {
         ROS_INFO("Mandando a habitacion 2\n");
-        goal.target_pose.pose.position.x = 8.23;
-        goal.target_pose.pose.position.y = 5.84;
+        goal.target_pose.pose.position.x = -5.97;
+        goal.target_pose.pose.position.y = -8.21;
     }
     else if (!(strcasecmp(arg,"spawn")))
     {
         ROS_INFO("Mandando a spawn\n");
         goal.target_pose.pose.position.x = 0.0;
-        goal.target_pose.pose.position.y = 2.0;
+        goal.target_pose.pose.position.y = 0.0;
     }
     else if (!(strcasecmp(arg,"consulta1")))
     {
         ROS_INFO("Mandando a consulta 1\n");
-        goal.target_pose.pose.position.x = 1;
-        goal.target_pose.pose.position.y = 1;
-        goal.target_pose.pose.orientation.w = 0.0013;
-
+        goal.target_pose.pose.position.x = -5.37;
+        goal.target_pose.pose.position.y = 1.13;
     }
     else if (!(strcasecmp(arg,"consulta2")))
     {
         ROS_INFO("Mandando a consulta 2\n");
-        goal.target_pose.pose.position.x = 3.15;
-        goal.target_pose.pose.position.y = -2.18;
+        goal.target_pose.pose.position.x = -5.22;
+        goal.target_pose.pose.position.y = -1.37;
     }
     else if (!(strcasecmp(arg,"almacen1")))
     {
         ROS_INFO("Mandando a almacen 1\n");
-        goal.target_pose.pose.position.x = -15.17;
-        goal.target_pose.pose.position.y = 0.93;
+        goal.target_pose.pose.position.x = 12.5;
+        goal.target_pose.pose.position.y = 7.89;
     }
     else if (!(strcasecmp(arg,"almacen2")))
     {
         ROS_INFO("Mandando a almacen 2\n");
-        goal.target_pose.pose.position.x = -9.07;
-        goal.target_pose.pose.position.y = 12.97;
+        goal.target_pose.pose.position.x = 12.47;
+        goal.target_pose.pose.position.y = -7.72;
     }
     else
         ROS_INFO("No se ha detectado nada\n");
@@ -80,22 +78,6 @@ void doneCb(const actionlib::SimpleClientGoalState& state,
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
 }
 
-/*
-void feedbackCb(const move_base_msgs::MoveBaseFeedbackConstPtr& feedback)
-{
-    double goal_x = goal.target_pose.pose.position.x;
-    double goal_y = goal.target_pose.pose.position.y;
-    double current_x = feedback->base_position.pose.position.x;
-    double current_y = feedback->base_position.pose.position.y;
-
-    double diff_x = goal_x - current_x;
-    double diff_y = goal_y - current_y;
-
-    double dist = sqrt(diff_x * diff_x + diff_y * diff_y);
-
-    ROS_INFO("Distance to goal: %lf", dist);
-}
-*/
 
 int main(int argc, char** argv){
     ros::init(argc, argv, "navigation");
@@ -113,12 +95,8 @@ int main(int argc, char** argv){
     goal.target_pose.header.frame_id = "map";
 
     set_goal(goal, argv[argc - 1]);
-    // -------- COORDENADAS PARA LA HABITACION 1 ---------- //
-    goal.target_pose.pose.position.x = 3.83;
-    goal.target_pose.pose.position.y = 0.416;
-    goal.target_pose.pose.orientation.w = 0.0013;
 
-  
+
     goal.target_pose.header.stamp = ros::Time::now();
     ROS_INFO("Sending goal");
     ac.sendGoal(goal, doneCb);//, MoveBaseClient::SimpleActiveCallback(), feedbackCb);
