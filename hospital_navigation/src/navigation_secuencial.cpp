@@ -33,7 +33,7 @@ void doneCb(const actionlib::SimpleClientGoalState& state,
 }
 
 
-void doWork(int num_points ,int states, float room1[2], float office1[2], float office2[2], float reception[2])
+void doWork(int num_points ,int states, float room1[2], float office1[2], float room2[2], float storage1[2])
 {
     move_base_msgs::MoveBaseGoal goal;
 
@@ -54,15 +54,15 @@ void doWork(int num_points ,int states, float room1[2], float office1[2], float 
         }
         else if (states == 1)
         {
-            set_goal(goal, reception[0], reception[1]);
+            set_goal(goal, office1[0], office1[1]);
         }
         else if (states == 2)
         {
-            set_goal(goal, office1[0], office1[1]);
+            set_goal(goal, storage1[0], storage1[1]);
         }
         else if (states == 3)
         {
-            set_goal(goal, office2[0], office2[1]);
+            set_goal(goal, room2[0], room2[1]);
         }
 
         goal.target_pose.header.stamp = ros::Time::now();
@@ -92,11 +92,11 @@ int main(int argc, char** argv){
     // ----------- 4 DIFFERENT MAP POINTS ------------ //
 
     float room1[2] = {-6.13, 8.2};
-    float reception[2] = {0.0, 0.0};
     float office1[2] = {-5.37, 1.13};
-    float office2[2] = {-5.32, -1.37};
+    float storage1[2] = {12.5, 7.89};
+    float room2[2] = {-5.97, -8.21};
 
-    doWork(num_points, states,room1, office1, office2, reception);
+    doWork(num_points, states,room1, office1, room2, storage1);
     // ----------------------------------------------- //
 
     return 0;
