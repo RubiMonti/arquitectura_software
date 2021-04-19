@@ -30,12 +30,6 @@ set(LINK_LIBS
 add_executable(navigation_once src/navigation_once.cpp)
 target_link_libraries(navigation_once ${catkin_LIBRARIES})
 
-add_executable(navigation_kobuki src/navigation_kobuki.cpp)
-target_link_libraries(navigation_kobuki ${catkin_LIBRARIES})
-
-add_executable(publish_points src/publish_points.cpp)
-target_link_libraries(publish_points ${catkin_LIBRARIES})
-
 add_executable(navigation_secuencial src/navigation_secuencial.cpp)
 target_link_libraries(navigation_secuencial ${catkin_LIBRARIES})
 
