@@ -19,27 +19,27 @@
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 void set_goal(move_base_msgs::MoveBaseGoal& goal, double x, double y)
-{  
+{
     goal.target_pose.pose.position.x = x;
     goal.target_pose.pose.position.y = y;
     goal.target_pose.pose.orientation.w = 0.0013;
-
 }
 
 void doneCb(const actionlib::SimpleClientGoalState& state,
-			const move_base_msgs::MoveBaseResultConstPtr& result)
+            const move_base_msgs::MoveBaseResultConstPtr& result)
 {
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
 }
 
 
 void doWork(int num_points ,int states, float room1[2], float office1[2], float room2[2], float storage1[2])
+
 {
     move_base_msgs::MoveBaseGoal goal;
 
     MoveBaseClient ac("move_base", true);
 
-    while(!ac.waitForServer(ros::Duration(5.0)))
+    while (!ac.waitForServer(ros::Duration(5.0)))
     {
         ROS_INFO("Waiting for the move_base action server to come up");
     }
@@ -71,7 +71,7 @@ void doWork(int num_points ,int states, float room1[2], float office1[2], float 
 
         ac.waitForResult();
 
-        if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             ROS_INFO("Hooray, mission accomplished");
             states++;
@@ -84,7 +84,8 @@ void doWork(int num_points ,int states, float room1[2], float office1[2], float 
 }
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv)
+{
     int states = 0;
     int num_points = 4;
     ros::init(argc, argv, "navigation");
@@ -97,8 +98,8 @@ int main(int argc, char** argv){
     float room2[2] = {-5.97, -8.21};
 
     doWork(num_points, states,room1, office1, room2, storage1);
+
     // ----------------------------------------------- //
 
     return 0;
-
 }
