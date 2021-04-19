@@ -33,3 +33,7 @@ target_link_libraries(navigation_once ${catkin_LIBRARIES})
 add_executable(navigation_secuencial src/navigation_secuencial.cpp)
 target_link_libraries(navigation_secuencial ${catkin_LIBRARIES})
 
+roslint_cpp(
+  src/navigation_once.cpp
+  src/navigation_secuencial.cpp
+)
