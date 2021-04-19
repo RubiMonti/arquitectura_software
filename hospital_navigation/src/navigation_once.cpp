@@ -99,18 +99,18 @@ int main(int argc, char** argv){
 
     goal.target_pose.header.stamp = ros::Time::now();
     ROS_INFO("Sending goal");
-    ac.sendGoal(goal, doneCb);//, MoveBaseClient::SimpleActiveCallback(), feedbackCb);
+    ac.sendGoal(goal, doneCb);
 
     ac.waitForResult();
 
     if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-
-        ROS_INFO("Hooray, the base moved 1 meter forward");
-
+    {
+        ROS_INFO("Hooray, mission accomplished");
+    }
     else
-
-        ROS_INFO("The base failed to move towards the desired point for some reason");
-
+    {
+        ROS_INFO("[Error] mission could not be accomplished");
+    }
 
 
     return 0;

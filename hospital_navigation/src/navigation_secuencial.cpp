@@ -18,8 +18,6 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-
-
 void set_goal(move_base_msgs::MoveBaseGoal& goal, double x, double y)
 {
     
@@ -38,7 +36,17 @@ void doneCb(const actionlib::SimpleClientGoalState& state,
 
 int main(int argc, char** argv){
     int states = 0;
+    int num_points = 4;
     ros::init(argc, argv, "navigation");
+
+    // ----------- 4 DIFFERENT MAP POINTS ------------ //
+
+    float habitacion1[2] = {-6.13, 8.2};
+    float recepcion[2] = {0.0, 0.0};
+    float consulta1[2] = {-5.37, 1.13};
+    float consulta2[2] = {-5.32, -1.37};
+
+    // ----------------------------------------------- //
 
     move_base_msgs::MoveBaseGoal goal;
 
@@ -53,35 +61,40 @@ int main(int argc, char** argv){
 
     goal.target_pose.header.frame_id = "map";
 
-    while (states < 4 )
+    while (states < num_points)
     {
-    
-        if(states == 0)
-            set_goal(goal, -6.13,8.2);
-        else if(states == 1)
-            set_goal(goal, 0.0,0.0);
-        else if(states == 2)
-            set_goal(goal,-5.37,1.13 );
-        else (states == 3)
-            set_goal(goal,-5.32, -1.37 );
-
-
+        if (states == 0)
+        {
+            set_goal(goal, habitacion1[0], habitacion1[1]);
+        }
+        else if (states == 1)
+        {
+            set_goal(goal, recepcion[0], recepcion[1]);
+        }
+        else if (states == 2)
+        {
+            set_goal(goal, consulta1[0], consulta1[1]);
+        }
+        else if (states == 3)
+        {
+            set_goal(goal, consulta2[0], consulta2[1]);
+        }
 
         goal.target_pose.header.stamp = ros::Time::now();
         ROS_INFO("Sending goal");
-        ac.sendGoal(goal, doneCb);//, MoveBaseClient::SimpleActiveCallback(), feedbackCb);
+        ac.sendGoal(goal, doneCb);
 
         ac.waitForResult();
 
         if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         {
-            ROS_INFO("Hooray, the base moved 1 meter forward");
+            ROS_INFO("Hooray, mission accomplished");
             states++;
         }
         else
-
-            ROS_INFO("The base failed to move towards the desired point for some reason");
-
+        {
+            ROS_INFO("[Error] mission could not be accomplished");
+        }
     }
 
     return 0;
