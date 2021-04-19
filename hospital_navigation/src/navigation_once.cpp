@@ -23,50 +23,50 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
 {
     ROS_INFO("ARG = %s\n", arg);
-    if (!(strcasecmp(arg,"habitacion1")))
+    if (!(strcasecmp(arg,"room1")))
     {
-        ROS_INFO("Mandando a habitacion 1\n");
+        ROS_INFO("Going to room1\n");
         goal.target_pose.pose.position.x = -6.13;
         goal.target_pose.pose.position.y = 8.2;
     }
-    else if (!(strcasecmp(arg,"habitacion2")))
+    else if (!(strcasecmp(arg,"room2")))
     {
-        ROS_INFO("Mandando a habitacion 2\n");
+        ROS_INFO("Going to room2\n");
         goal.target_pose.pose.position.x = -5.97;
         goal.target_pose.pose.position.y = -8.21;
     }
-    else if (!(strcasecmp(arg,"spawn")))
+    else if (!(strcasecmp(arg,"reception")))
     {
-        ROS_INFO("Mandando a spawn\n");
+        ROS_INFO("Going to reception\n");
         goal.target_pose.pose.position.x = 0.0;
         goal.target_pose.pose.position.y = 0.0;
     }
-    else if (!(strcasecmp(arg,"consulta1")))
+    else if (!(strcasecmp(arg,"office1")))
     {
-        ROS_INFO("Mandando a consulta 1\n");
+        ROS_INFO("Going to offcie1\n");
         goal.target_pose.pose.position.x = -5.37;
         goal.target_pose.pose.position.y = 1.13;
     }
-    else if (!(strcasecmp(arg,"consulta2")))
+    else if (!(strcasecmp(arg,"office2")))
     {
-        ROS_INFO("Mandando a consulta 2\n");
+        ROS_INFO("Going to office2\n");
         goal.target_pose.pose.position.x = -5.22;
         goal.target_pose.pose.position.y = -1.37;
     }
-    else if (!(strcasecmp(arg,"almacen1")))
+    else if (!(strcasecmp(arg,"storage1")))
     {
-        ROS_INFO("Mandando a almacen 1\n");
+        ROS_INFO("Going to storage1\n");
         goal.target_pose.pose.position.x = 12.5;
         goal.target_pose.pose.position.y = 7.89;
     }
-    else if (!(strcasecmp(arg,"almacen2")))
+    else if (!(strcasecmp(arg,"storage2")))
     {
-        ROS_INFO("Mandando a almacen 2\n");
+        ROS_INFO("Going to storage2\n");
         goal.target_pose.pose.position.x = 12.47;
         goal.target_pose.pose.position.y = -7.72;
     }
     else
-        ROS_INFO("No se ha detectado nada\n");
+        ROS_INFO("Nothing is detected\n");
     
     goal.target_pose.pose.orientation.w = 0.0013;
 
@@ -86,10 +86,9 @@ int main(int argc, char** argv){
 
     MoveBaseClient ac("move_base", true);
 
-    while(!ac.waitForServer(ros::Duration(5.0))){
-
+    while(!ac.waitForServer(ros::Duration(5.0)))
+    {
         ROS_INFO("Waiting for the move_base action server to come up");
-
     }
 
     goal.target_pose.header.frame_id = "map";
