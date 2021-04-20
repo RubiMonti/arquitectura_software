@@ -18,8 +18,6 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-
-
 void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
 {
     ROS_INFO("ARG = %s\n", arg);
