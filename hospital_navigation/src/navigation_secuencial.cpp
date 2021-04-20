@@ -20,43 +20,28 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 void set_goal(move_base_msgs::MoveBaseGoal& goal, double x, double y)
 {
-    
     goal.target_pose.pose.position.x = x;
     goal.target_pose.pose.position.y = y;
     goal.target_pose.pose.orientation.w = 0.0013;
-
 }
 
 void doneCb(const actionlib::SimpleClientGoalState& state,
-			const move_base_msgs::MoveBaseResultConstPtr& result)
+            const move_base_msgs::MoveBaseResultConstPtr& result)
 {
     ROS_INFO("Finished in state [%s]", state.toString().c_str());
 }
 
 
-int main(int argc, char** argv){
-    int states = 0;
-    int num_points = 4;
-    ros::init(argc, argv, "navigation");
+void doWork(int num_points ,int states, float room1[2], float office1[2], float room2[2], float storage1[2])
 
-    // ----------- 4 DIFFERENT MAP POINTS ------------ //
-
-    float habitacion1[2] = {-6.13, 8.2};
-    float recepcion[2] = {0.0, 0.0};
-    float consulta1[2] = {-5.37, 1.13};
-    float consulta2[2] = {-5.32, -1.37};
-
-    // ----------------------------------------------- //
-
+{
     move_base_msgs::MoveBaseGoal goal;
 
     MoveBaseClient ac("move_base", true);
 
-
-    while(!ac.waitForServer(ros::Duration(5.0))){
-
+    while (!ac.waitForServer(ros::Duration(5.0)))
+    {
         ROS_INFO("Waiting for the move_base action server to come up");
-
     }
 
     goal.target_pose.header.frame_id = "map";
@@ -65,19 +50,19 @@ int main(int argc, char** argv){
     {
         if (states == 0)
         {
-            set_goal(goal, habitacion1[0], habitacion1[1]);
+            set_goal(goal, room1[0], room1[1]);
         }
         else if (states == 1)
         {
-            set_goal(goal, recepcion[0], recepcion[1]);
+            set_goal(goal, office1[0], office1[1]);
         }
         else if (states == 2)
         {
-            set_goal(goal, consulta1[0], consulta1[1]);
+            set_goal(goal, storage1[0], storage1[1]);
         }
         else if (states == 3)
         {
-            set_goal(goal, consulta2[0], consulta2[1]);
+            set_goal(goal, room2[0], room2[1]);
         }
 
         goal.target_pose.header.stamp = ros::Time::now();
@@ -86,7 +71,7 @@ int main(int argc, char** argv){
 
         ac.waitForResult();
 
-        if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+        if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         {
             ROS_INFO("Hooray, mission accomplished");
             states++;
@@ -96,7 +81,25 @@ int main(int argc, char** argv){
             ROS_INFO("[Error] mission could not be accomplished");
         }
     }
+}
+
+
+int main(int argc, char** argv)
+{
+    int states = 0;
+    int num_points = 4;
+    ros::init(argc, argv, "navigation");
+
+    // ----------- 4 DIFFERENT MAP POINTS ------------ //
+
+    float room1[2] = {-6.13, 8.2};
+    float office1[2] = {-5.37, 1.13};
+    float storage1[2] = {12.5, 7.89};
+    float room2[2] = {-5.97, -8.21};
+
+    doWork(num_points, states,room1, office1, room2, storage1);
+
+    // ----------------------------------------------- //
 
     return 0;
-
 }
