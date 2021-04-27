@@ -36,7 +36,7 @@ void doneCb(const actionlib::SimpleClientGoalState& state,
 }
 
 
-void doWork(int num_points, int states, float room1[2], float office1[2], float office2[2], float reception[2])
+void doWork(int num_points, int states, float room1[2], float office1[2], float room2[2], float storage1[2])
 {
     move_base_msgs::MoveBaseGoal goal;
 
@@ -93,7 +93,6 @@ void doWork(int num_points, int states, float room1[2], float office1[2], float 
     }
 }
 
-
 int main(int argc, char** argv)
 {
     int states = 0;
@@ -109,8 +108,7 @@ int main(int argc, char** argv)
     float office1[2] = {-3.08, 2.68};
     float office2[2] = {0.16, 2.76};
 
-    doWork(num_points, states, room1, office1, office2, reception);
-    // ----------------------------------------------- //
+    doWork(num_points, states, room1, office1, room2, storage1);
 
     return 0;
 }
