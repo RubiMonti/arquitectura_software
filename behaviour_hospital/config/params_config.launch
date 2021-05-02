@@ -1,0 +1,6 @@
+<launch>
+
+	<node pkg="hospital_navigation" type="navigation_once" name="navigation" output="screen">
+		<rosparam command="load" file="$(find hospital_navigation)/config/points_params.yaml"/>
+	</node>
+</launch>
