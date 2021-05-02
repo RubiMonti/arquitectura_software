@@ -29,10 +29,56 @@
 #include <sensor_msgs/PointCloud2.h>
 
 #include <boost/algorithm/string.hpp>
+#include <pcl_ros/transforms.h>
 
+class RGBDFilter
+{
+public:
+  RGBDFilter()
+  {
+    cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
+  }
+
+  void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
+  {
+    sensor_msgs::PointCloud2 cloud;
+
+    try
+    {
+      pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud, tfListener_);
+    }
+    catch(tf::TransformException & ex)
+    {
+      ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
+      return;
+    }
+
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::fromROSMsg(cloud, *pcrgb);
+
+    int c_w = cloud_in->width / 2;
+    int c_h = cloud_in->height / 2;
+
+    auto point_3d = pcrgb->at(c_w,c_h);
+
+    std::cout << "(" << point_3d.x << "," << point_3d.y << "," << point_3d.z << ")" << std::endl;
+
+  }
+
+  
+
+private:
+  
+  ros::NodeHandle nh_;
+  ros::Subscriber cloud_sub_;
+  tf::TransformListener tfListener_;
+
+};
 
 int main(int argc, char** argv)
 {
-  
+  ros::init(argc, argv, "rgbd_center");
+  RGBDFilter rf;
+  ros::spin();
   return 0;
 }
