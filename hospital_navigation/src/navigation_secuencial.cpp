@@ -19,7 +19,6 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-ros::NodeHandle nh_;
 ros::Publisher sound_pub_;
 
 void set_goal(move_base_msgs::MoveBaseGoal& goal, double x, double y)
@@ -60,7 +59,7 @@ void doWork(int num_points, int states, float room1[2], float office1[2], float 
         else if (states == 3)
         {
             msg.value = 4;
-            set_goal(goal, reception[0], reception[1]);
+            set_goal(goal, storage1[0], storage1[1]);
         }
         else if (states == 1)
         {
@@ -70,7 +69,7 @@ void doWork(int num_points, int states, float room1[2], float office1[2], float 
         else if (states == 2)
         {
             msg.value = 3;
-            set_goal(goal, office2[0], office2[1]);
+            set_goal(goal, room2[0], room2[1]);
         }
 
         goal.target_pose.header.stamp = ros::Time::now();
@@ -95,6 +94,9 @@ void doWork(int num_points, int states, float room1[2], float office1[2], float 
 
 int main(int argc, char** argv)
 {
+
+    ros::NodeHandle nh_;
+    
     int states = 0;
     int num_points = 4;
     sound_pub_ = nh_.advertise<kobuki_msgs::Sound>("/mobile_base/commands/sound", 1);
@@ -108,7 +110,7 @@ int main(int argc, char** argv)
     float office1[2] = {-3.08, 2.68};
     float office2[2] = {0.16, 2.76};
 
-    doWork(num_points, states, room1, office1, room2, storage1);
+    doWork(num_points, states, room1, office1, office2, reception);
 
     return 0;
 }
