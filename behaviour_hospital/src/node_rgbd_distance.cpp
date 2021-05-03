@@ -31,6 +31,11 @@
 #include <boost/algorithm/string.hpp>
 #include <pcl_ros/transforms.h>
 
+#include "move_base_msgs/MoveBaseAction.h"
+#include "actionlib/client/simple_action_client.h"
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
 class RGBDFilter
 {
 public:
@@ -41,6 +46,7 @@ public:
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
   {
+    double x,y,z;
     sensor_msgs::PointCloud2 cloud;
 
     try
@@ -60,12 +66,12 @@ public:
     int c_h = cloud_in->height / 2;
 
     auto point_3d = pcrgb->at(c_w,c_h);
+    x = point_3d.x;
+    y = point_3d.y;
+    z = point_3d.z;
 
-    std::cout << "(" << point_3d.x << "," << point_3d.y << "," << point_3d.z << ")" << std::endl;
-
+    //std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
   }
-
-  
 
 private:
   
@@ -75,10 +81,71 @@ private:
 
 };
 
+void doneCb(const actionlib::SimpleClientGoalState& state,
+            const move_base_msgs::MoveBaseResultConstPtr& result)
+  {
+    ROS_INFO("Finished in state [%s]", state.toString().c_str());
+  }
+
+void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
+  {
+    float x,y;
+    ROS_INFO("ARG = %s\n",arg);
+    
+    x = goal.target_pose.pose.position.x;
+    y = goal.target_pose.pose.position.y;
+
+    if(!(strcasecmp(arg, "room1")))
+    {
+      ROS_INFO("Going to room1\n");
+      x = -6.13;
+      y = 8.2;
+    }
+    else
+    {
+      ROS_INFO("NOTHING RECEIVED\n");
+    }
+
+
+
+    goal.target_pose.pose.orientation.w = 0.0013;
+    
+    
+    
+  }
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rgbd_center");
   RGBDFilter rf;
-  ros::spin();
+
+  move_base_msgs::MoveBaseGoal goal;
+
+  MoveBaseClient ac("move_base", true);
+
+  while (!ac.waitForServer(ros::Duration(5.0)))
+  {
+      ROS_INFO("Waiting for the move_base action server to come up");
+  }
+
+  goal.target_pose.header.frame_id = "map";
+
+  set_goal(goal, argv[argc-1]);
+  goal.target_pose.header.stamp = ros::Time::now();
+  ROS_INFO("Sending goal");
+  ac.sendGoal(goal,doneCb);
+  ac.waitForResult();
+  
+
+  if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+  {
+      ROS_INFO("Hooray, mission accomplished");
+  }
+  else
+  {
+      ROS_INFO("[Error] mission could not be accomplished");
+  }
+
+  //ros::spin();
   return 0;
 }
