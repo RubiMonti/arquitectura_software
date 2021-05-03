@@ -70,7 +70,7 @@ public:
     y = point_3d.y;
     z = point_3d.z;
 
-    //std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
+    std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
   }
 
 private:
@@ -92,26 +92,56 @@ void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
     float x,y;
     ROS_INFO("ARG = %s\n",arg);
     
-    x = goal.target_pose.pose.position.x;
-    y = goal.target_pose.pose.position.y;
+;
 
-    if(!(strcasecmp(arg, "room1")))
+    if(arg == "room1")
     {
       ROS_INFO("Going to room1\n");
-      x = -6.13;
-      y = 8.2;
+      goal.target_pose.pose.position.x = -6.13;
+      goal.target_pose.pose.position.y = 8.2;
+    }
+    else if (arg == "room2")
+    {
+        ROS_INFO("Going to room2\n");
+        goal.target_pose.pose.position.x = -5.97;
+        goal.target_pose.pose.position.y = -8.21;
+    }
+    else if (arg == "hall")
+    {
+        ROS_INFO("Going to hall\n");
+        goal.target_pose.pose.position.x = 0.0;
+        goal.target_pose.pose.position.y = 0.0;
+    }
+    else if (arg == "office1")
+    {
+        ROS_INFO("Going to offcie1\n");
+        goal.target_pose.pose.position.x = -5.37;
+        goal.target_pose.pose.position.y = 1.13;
+    }
+    else if (arg == "office2")
+    {
+        ROS_INFO("Going to office2\n");
+        goal.target_pose.pose.position.x = -5.22;
+        goal.target_pose.pose.position.y = -1.37;
+    }
+    else if (arg == "storage1")
+    {
+        ROS_INFO("Going to storage1\n");
+        goal.target_pose.pose.position.x = 12.5;
+        goal.target_pose.pose.position.y = 7.89;
+    }
+    else if (arg == "storage2")
+    {
+        ROS_INFO("Going to storage2\n");
+        goal.target_pose.pose.position.x = 12.47;
+        goal.target_pose.pose.position.y = -7.72;
     }
     else
     {
       ROS_INFO("NOTHING RECEIVED\n");
     }
 
-
-
     goal.target_pose.pose.orientation.w = 0.0013;
-    
-    
-    
   }
 
 int main(int argc, char** argv)
@@ -119,6 +149,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "rgbd_center");
   RGBDFilter rf;
 
+  
   move_base_msgs::MoveBaseGoal goal;
 
   MoveBaseClient ac("move_base", true);
@@ -145,7 +176,8 @@ int main(int argc, char** argv)
   {
       ROS_INFO("[Error] mission could not be accomplished");
   }
+  
 
-  //ros::spin();
+  ros::spin();
   return 0;
 }
