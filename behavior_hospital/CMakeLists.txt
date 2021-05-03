@@ -43,6 +43,18 @@ set(LINK_LIBS
 add_executable(node_rgbd_distance src/node_rgbd_distance.cpp)
 target_link_libraries(node_rgbd_distance ${catkin_LIBRARIES})
 
+add_executable(Go_goal.cpp src/Behavior_hospital/Go_goal.cpp)
+target_link_libraries(Go_goal ${catkin_LIBRARIES})
+
+add_executable(Find_object.cpp src/Behavior_hospital/Find_object.cpp)
+target_link_libraries(Find_object ${catkin_LIBRARIES})
+
+add_executable(Behavior_hospital_node.cpp src/Behavior_hospital/Behavior_hospital_node.cpp)
+target_link_libraries(Behavior_hospital_node ${catkin_LIBRARIES})
+
 roslint_cpp(
   src/node_rgbd_distance.cpp
+  src/Behavior_hospital/Go_goal.cpp
+  src/Behavior_hospital/Find_object.cpp
+  src/Behavior_hospital/Behavior_hospital_node.cpp
 )
