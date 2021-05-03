@@ -36,7 +36,6 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-
 class RGBDFilter
 {
 public:
