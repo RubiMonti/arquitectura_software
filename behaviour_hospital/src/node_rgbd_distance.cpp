@@ -70,7 +70,7 @@ public:
     y = point_3d.y;
     z = point_3d.z;
 
-    //std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
+    std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
   }
 
 private:
