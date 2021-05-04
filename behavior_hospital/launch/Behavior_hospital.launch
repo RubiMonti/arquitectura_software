@@ -1,0 +1,6 @@
+<launch>
+	<node pkg="Behavior_hospital" type="Go_goal" name="Go">
+	<node pkg="Behavior_hospital" type="Find_object" name="Find">
+	<node pkg="Behavior_hospital" type="Behavior_hospital_node" name="Behavior_hospital">
+
+</launch>
