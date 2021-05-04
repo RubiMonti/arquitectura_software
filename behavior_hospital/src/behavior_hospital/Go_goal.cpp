@@ -1,4 +1,4 @@
-#include "include/Behavior_hospital/Go_goal.h"
+#include "behavior_hospital/Go_goal.h"
 
 #include "bica/Component.h"
 #include "ros/ros.h"
