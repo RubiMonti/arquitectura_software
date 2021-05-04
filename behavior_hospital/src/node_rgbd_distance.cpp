@@ -51,7 +51,7 @@ public:
 
     try
     {
-      pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud, tfListener_);
+      pcl_ros::transformPointCloud("map", *cloud_in, cloud, tfListener_);
     }
     catch(tf::TransformException & ex)
     {
@@ -108,7 +108,7 @@ void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
 
 
 
-    goal.target_pose.pose.orientation.w = 0.0013;
+    goal.target_pose.pose.orientation.w = 1;
     
     
     
