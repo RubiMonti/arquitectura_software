@@ -12,6 +12,7 @@
 #include <tf/transform_listener.h>
 
 #include <std_msgs/Float32.h>
+#include <std_msgs/Bool.h>
 #include <sensor_msgs/PointCloud2.h>
 
 #include <boost/algorithm/string.hpp>
@@ -25,37 +26,35 @@
 class DarknetDetection
 {
 public:
-    DarknetDetection() : object_detected_(false)
+    DarknetDetection()
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
+        finish_detection_ = nh_.advertise<std_msgs::Bool>("/detected", 1);
     }
 
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
     {
-        ROS_INFO("DENTRO DEL CALLBACK");
+        std_msgs::Bool object_detected_;     
 
 		int size = box_msg->bounding_boxes.size();
 	
         for(int iter = 0; iter <= size; iter++)
         {
-            ROS_WARN("ID OBJECT: %d", box_msg->bounding_boxes[iter].id);
-            //box_msg->bounding_boxes[iter].class == "chair"
-
-            if(box_msg->bounding_boxes[iter].id == 56 && box_msg->bounding_boxes[iter].probability > 0.35)
+            if (box_msg->bounding_boxes[iter].Class == "chair" && box_msg->bounding_boxes[iter].probability > 0.35)
             {
-
                 ROS_INFO("OBJECT DETECTED!");
-        
-            }
+                finish_detection_.publish(object_detected_);
+
+            }   
         }
 		
 	}
 
 private:
     ros::NodeHandle nh_;
-    ros::Subscriber object_detection_;
 
-    bool object_detected_;
+    ros::Subscriber object_detection_;
+    ros::Publisher finish_detection_;
 
 };
 
