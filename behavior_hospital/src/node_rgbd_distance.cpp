@@ -42,6 +42,7 @@ public:
   RGBDFilter()
   {
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
+    object_sub_ = nh_.subscribe("/detected", 1, &RGBDFilter::calculatePoint2D, this);
   }
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
@@ -73,11 +74,26 @@ public:
     std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
   }
 
+  void calculatePoint2D(const darknet_ros_msgs::BoundingBoxes::ConstPtr& obj_msg)
+  {
+    
+  }
+
 private:
   
   ros::NodeHandle nh_;
+
   ros::Subscriber cloud_sub_;
+  ros::Subscriber object_sub_;
+
   tf::TransformListener tfListener_;
+
+  float 2dx_;
+  float 2dy_;
+  float 3dx_;
+  float 3dy_;
+  float 3dz_;
+
 
 };
 
