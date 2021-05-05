@@ -54,7 +54,7 @@ public:
 
     try
     {
-      pcl_ros::transformPointCloud("map", *cloud_in, cloud, tfListener_);
+      pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud, tfListener_);
     }
     catch(tf::TransformException & ex)
     {
@@ -65,19 +65,26 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud, *pcrgb);
 
-    auto point_3d = pcrgb->at(coor2dx_,coor2dy_);
-    coor3dx_ = point_3d.x;
-    coor3dy_ = point_3d.y;
-    coor3dz_ = point_3d.z;
+    int c_w = cloud_in->width / 2;
+    int c_h = cloud_in->height / 2;
 
-    std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
+    auto point3d = pcrgb->at(c_w,c_h);
+    coor3dx_ = point3d.x;
+    coor3dy_ = point3d.y;
+    coor3dz_ = point3d.z;
+    //std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
+
   }
 
-  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& obj_msg)
+  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
   {
-    coor2dx_ = (obj_msg->xmin + obj_msg->xmax)/2; // obj_msg->xmin + (obj_msg->xmax - obj_msg->xmin)/2
-    coor2dy_ = (obj_msg->ymin + obj_msg->ymax)/2;    
+    coor2dx_ = (objmsg->xmin + objmsg->xmax)/2; // obj_msg->xmin + (obj_msg->xmax - objmsg->xmin)/2
+    coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
+    std::cout << "(" << coor2dx_ << "," << coor2dy_ << ")" << std::endl;
+
   }
+
+
 
 private:
   
@@ -96,44 +103,41 @@ private:
 
 };
 
-void doneCb(const actionlib::SimpleClientGoalState& state,
-            const move_base_msgs::MoveBaseResultConstPtr& result)
-  {
-    ROS_INFO("Finished in state [%s]", state.toString().c_str());
-  }
+//void doneCb(const actionlib::SimpleClientGoalState& state,
+//            const move_base_msgs::MoveBaseResultConstPtr& result)
+//  {
+//    ROS_INFO("Finished in state [%s]", state.toString().c_str());
+//  }
 
-void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
-  {
-    float x,y;
-    ROS_INFO("ARG = %s\n",arg);
-    
-    x = goal.target_pose.pose.position.x;
-    y = goal.target_pose.pose.position.y;
-
-    if(!(strcasecmp(arg, "room1")))
-    {
-      ROS_INFO("Going to room1\n");
-      x = -6.13;
-      y = 8.2;
-    }
-    else
-    {
-      ROS_INFO("NOTHING RECEIVED\n");
-    }
-
-
-
-    goal.target_pose.pose.orientation.w = 1;
-    
-    
-    
-  }
+//void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
+//  {
+//    float x,y;
+//    ROS_INFO("ARG = %s\n",arg);
+//    
+//    x = goal.target_pose.pose.position.x;
+//    y = goal.target_pose.pose.position.y;
+//
+//    if(!(strcasecmp(arg, "room1")))
+//    {
+//      ROS_INFO("Going to room1\n");
+//      x = -6.13;
+//      y = 8.2;
+//    }
+//    else
+//    {
+//      ROS_INFO("NOTHING RECEIVED\n");
+//    }
+//
+//    goal.target_pose.pose.orientation.w = 1;
+//    
+//  }
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rgbd_center");
   RGBDFilter rf;
 
+  /*
   move_base_msgs::MoveBaseGoal goal;
 
   MoveBaseClient ac("move_base", true);
@@ -160,7 +164,7 @@ int main(int argc, char** argv)
   {
       ROS_INFO("[Error] mission could not be accomplished");
   }
-
-  //ros::spin();
+  */
+  ros::spin();
   return 0;
 }
