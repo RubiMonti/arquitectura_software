@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(behaviour_hospital)
+project(behavior_hospital)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roslint
   kobuki_msgs
   sensor_msgs
+  darknet_ros_msgs
 
   cv_bridge
   image_transport
@@ -19,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package(
  
-  CATKIN_DEPENDS roscpp actionlib move_base_msgs std_msgs kobuki_msgs sensor_msgs cv_bridge
+  CATKIN_DEPENDS roscpp actionlib move_base_msgs std_msgs kobuki_msgs sensor_msgs cv_bridge darknet_ros_msgs
   image_transport pcl_conversions pcl_ros
 )
 
@@ -43,18 +44,11 @@ set(LINK_LIBS
 add_executable(node_rgbd_distance src/node_rgbd_distance.cpp)
 target_link_libraries(node_rgbd_distance ${catkin_LIBRARIES})
 
-add_executable(Go_goal src/Behavior_hospital/Go_goal.cpp)
-target_link_libraries(Go_goal ${catkin_LIBRARIES})
+add_executable(darknet_node src/darknet_node.cpp)
+target_link_libraries(darknet_node ${catkin_LIBRARIES})
 
-add_executable(Find_object src/Behavior_hospital/Find_object.cpp)
-target_link_libraries(Find_object ${catkin_LIBRARIES})
-
-add_executable(Behavior_hospital_node src/Behavior_hospital/Behavior_hospital_impl.cpp)
-target_link_libraries(Behavior_hospital_node ${catkin_LIBRARIES})
 
 roslint_cpp(
   src/node_rgbd_distance.cpp
-  src/Behavior_hospital/Go_goal.cpp
-  src/Behavior_hospital/Find_object.cpp
-  src/Behavior_hospital/Behavior_hospital_impl.cpp
+
 )

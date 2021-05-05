@@ -31,6 +31,8 @@
 #include <boost/algorithm/string.hpp>
 #include <pcl_ros/transforms.h>
 
+#include "darknet_ros_msgs/BoundingBoxes.h"
+
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
 
@@ -42,6 +44,7 @@ public:
   RGBDFilter()
   {
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
+    object_sub_ = nh_.subscribe("/detected", 1, &RGBDFilter::calculatePoint2D, this);
   }
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
@@ -51,7 +54,7 @@ public:
 
     try
     {
-      pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud, tfListener_);
+      pcl_ros::transformPointCloud("map", *cloud_in, cloud, tfListener_);
     }
     catch(tf::TransformException & ex)
     {
@@ -62,22 +65,34 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud, *pcrgb);
 
-    int c_w = cloud_in->width / 2;
-    int c_h = cloud_in->height / 2;
+    auto point_3d = pcrgb->at(coor2dx_,coor2dy_);
+    coor3dx_ = point_3d.x;
+    coor3dy_ = point_3d.y;
+    coor3dz_ = point_3d.z;
 
-    auto point_3d = pcrgb->at(c_w,c_h);
-    x = point_3d.x;
-    y = point_3d.y;
-    z = point_3d.z;
+    std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
+  }
 
-    std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
+  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& obj_msg)
+  {
+    coor2dx_ = (obj_msg->xmin + obj_msg->xmax)/2; // obj_msg->xmin + (obj_msg->xmax - obj_msg->xmin)/2
+    coor2dy_ = (obj_msg->ymin + obj_msg->ymax)/2;    
   }
 
 private:
   
   ros::NodeHandle nh_;
+
   ros::Subscriber cloud_sub_;
+  ros::Subscriber object_sub_;
+
   tf::TransformListener tfListener_;
+
+  float coor2dx_;
+  float coor2dy_;
+  float coor3dx_;
+  float coor3dy_;
+  float coor3dz_;
 
 };
 
@@ -108,7 +123,7 @@ void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
 
 
 
-    goal.target_pose.pose.orientation.w = 0.0013;
+    goal.target_pose.pose.orientation.w = 1;
     
     
     
