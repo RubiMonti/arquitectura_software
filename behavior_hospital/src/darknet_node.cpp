@@ -26,10 +26,11 @@
 class DarknetDetection
 {
 public:
-    DarknetDetection()
+    DarknetDetection(char *object)
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
         finish_detection_ = nh_.advertise<std_msgs::Bool>("/detected", 1);
+        to_detect = object;
     }
 
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
@@ -40,7 +41,7 @@ public:
 	
         for(int iter = 0; iter <= size; iter++)
         {
-            if (box_msg->bounding_boxes[iter].Class == "chair" && box_msg->bounding_boxes[iter].probability > 0.35)
+            if (box_msg->bounding_boxes[iter].Class == to_detect && box_msg->bounding_boxes[iter].probability > 0.35)
             {
                 ROS_INFO("OBJECT DETECTED!");
                 finish_detection_.publish(object_detected_);
@@ -56,13 +57,15 @@ private:
     ros::Subscriber object_detection_;
     ros::Publisher finish_detection_;
 
+    char *to_detect;
+
 };
 
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "darknet");
 
-    DarknetDetection dd;
+    DarknetDetection dd = DarknetDetection(argv[2]);
 
     ros::Rate loop_rate(20);
     while (ros::ok())
