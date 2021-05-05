@@ -29,8 +29,8 @@ public:
     DarknetDetection(char *object)
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
-        finish_detection_ = nh_.advertise<darknet_ros_msgs::BoundingBoxes>("/detected", 1);
-        to_detect = object;
+        finish_detection_ = nh_.advertise<darknet_ros_msgs::BoundingBox>("/detected", 1);
+        to_detect_ = object;
     }
 
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
@@ -41,10 +41,10 @@ public:
 	
         for(int iter = 0; iter <= size; iter++)
         {
-            if (box_msg->bounding_boxes[iter].Class == to_detect && box_msg->bounding_boxes[iter].probability > 0.35)
+            if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability > 0.35)
             {
                 ROS_INFO("OBJECT DETECTED!");
-                finish_detection_.publish(*box_msg);
+                finish_detection_.publish(box_msg->bounding_boxes[iter]);
 
             }   
         }
@@ -57,7 +57,7 @@ private:
     ros::Subscriber object_detection_;
     ros::Publisher finish_detection_;
 
-    char *to_detect;
+    char *to_detect_;
 
 };
 

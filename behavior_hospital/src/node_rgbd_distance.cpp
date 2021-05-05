@@ -31,6 +31,8 @@
 #include <boost/algorithm/string.hpp>
 #include <pcl_ros/transforms.h>
 
+#include "darknet_ros_msgs/BoundingBoxes.h"
+
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
 
@@ -63,20 +65,18 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud, *pcrgb);
 
-    int c_w = cloud_in->width / 2;
-    int c_h = cloud_in->height / 2;
+    auto point_3d = pcrgb->at(coor2dx_,coor2dy_);
+    coor3dx_ = point_3d.x;
+    coor3dy_ = point_3d.y;
+    coor3dz_ = point_3d.z;
 
-    auto point_3d = pcrgb->at(c_w,c_h);
-    x = point_3d.x;
-    y = point_3d.y;
-    z = point_3d.z;
-
-    std::cout << "(" << x << "," << y << "," << z << ")" << std::endl;
+    std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
   }
 
-  void calculatePoint2D(const darknet_ros_msgs::BoundingBoxes::ConstPtr& obj_msg)
+  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& obj_msg)
   {
-    
+    coor2dx_ = (obj_msg->xmin + obj_msg->xmax)/2; // obj_msg->xmin + (obj_msg->xmax - obj_msg->xmin)/2
+    coor2dy_ = (obj_msg->ymin + obj_msg->ymax)/2;    
   }
 
 private:
@@ -88,12 +88,11 @@ private:
 
   tf::TransformListener tfListener_;
 
-  float 2dx_;
-  float 2dy_;
-  float 3dx_;
-  float 3dy_;
-  float 3dz_;
-
+  float coor2dx_;
+  float coor2dy_;
+  float coor3dx_;
+  float coor3dy_;
+  float coor3dz_;
 
 };
 
