@@ -65,23 +65,39 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud, *pcrgb);
 
-    int c_w = cloud_in->width / 2;
-    int c_h = cloud_in->height / 2;
-
-    auto point3d = pcrgb->at(c_w,c_h);
+    auto point3d = pcrgb->at(coor2dx_,coor2dy_);
     coor3dx_ = point3d.x;
     coor3dy_ = point3d.y;
     coor3dz_ = point3d.z;
+
     //std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
+
+    tf::StampedTransform transform;
+    transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
+    transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
+
+    transform.stamp_ = ros::Time::now();
+    transform.frame_id_ = "/base_footprint";
+    transform.child_frame_id_ = object_;
+
+    try
+    {
+      tfBroadcaster_.sendTransform(transform);
+    }
+    catch(tf::TransformException& ex)
+    {
+      ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
+      return;
+    }
 
   }
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
   {
-    coor2dx_ = (objmsg->xmin + objmsg->xmax)/2; // obj_msg->xmin + (obj_msg->xmax - objmsg->xmin)/2
+    coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
     coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
+    object_ = objmsg->Class;
     std::cout << "(" << coor2dx_ << "," << coor2dy_ << ")" << std::endl;
-
   }
 
 
@@ -93,7 +109,10 @@ private:
   ros::Subscriber cloud_sub_;
   ros::Subscriber object_sub_;
 
+  tf::TransformBroadcaster tfBroadcaster_;
   tf::TransformListener tfListener_;
+
+  std::string object_;
 
   float coor2dx_;
   float coor2dy_;

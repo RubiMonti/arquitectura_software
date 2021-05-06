@@ -47,9 +47,6 @@ public:
                 //ROS_INFO("%ld,%ld",box_msg->bounding_boxes[iter].xmax,box_msg->bounding_boxes[iter].xmin);
 
                 finish_detection_.publish(box_msg->bounding_boxes[iter]);
-                coor2dx_ = (box_msg->bounding_boxes[iter].xmin + box_msg->bounding_boxes[iter].xmax)/2; // obj_msg->xmin + (obj_msg->xmax - obj_msg->xmin)/2
-                coor2dy_ = (box_msg->bounding_boxes[iter].ymin + box_msg->bounding_boxes[iter].ymax)/2;   
-                //ROS_INFO("%f,%f",coor2dx_, coor2dy_);
             }
             
         }
