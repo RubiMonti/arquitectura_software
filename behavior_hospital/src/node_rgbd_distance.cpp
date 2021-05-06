@@ -66,11 +66,12 @@ public:
     pcl::fromROSMsg(cloud, *pcrgb);
 
     auto point3d = pcrgb->at(coor2dx_,coor2dy_);
-    coor3dx_ = point3d.x;
-    coor3dy_ = point3d.y;
-    coor3dz_ = point3d.z;
-
-    //std::cout << "(" << coor3dx_ << "," << coor3dy_ << "," << coor3dz_ << ")" << std::endl;
+    if (!(std::isnan(point3d.x) || std::isnan(point3d.y) || std::isnan(point3d.z)))
+    {
+      coor3dx_ = point3d.x;
+      coor3dy_ = point3d.y;
+      coor3dz_ = point3d.z;
+    }
 
     tf::StampedTransform transform;
     transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
@@ -100,8 +101,6 @@ public:
     std::cout << "(" << coor2dx_ << "," << coor2dy_ << ")" << std::endl;
   }
 
-
-
 private:
   
   ros::NodeHandle nh_;
@@ -122,68 +121,11 @@ private:
 
 };
 
-//void doneCb(const actionlib::SimpleClientGoalState& state,
-//            const move_base_msgs::MoveBaseResultConstPtr& result)
-//  {
-//    ROS_INFO("Finished in state [%s]", state.toString().c_str());
-//  }
-
-//void set_goal(move_base_msgs::MoveBaseGoal& goal, char* arg)
-//  {
-//    float x,y;
-//    ROS_INFO("ARG = %s\n",arg);
-//    
-//    x = goal.target_pose.pose.position.x;
-//    y = goal.target_pose.pose.position.y;
-//
-//    if(!(strcasecmp(arg, "room1")))
-//    {
-//      ROS_INFO("Going to room1\n");
-//      x = -6.13;
-//      y = 8.2;
-//    }
-//    else
-//    {
-//      ROS_INFO("NOTHING RECEIVED\n");
-//    }
-//
-//    goal.target_pose.pose.orientation.w = 1;
-//    
-//  }
-
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "rgbd_center");
   RGBDFilter rf;
 
-  /*
-  move_base_msgs::MoveBaseGoal goal;
-
-  MoveBaseClient ac("move_base", true);
-
-  while (!ac.waitForServer(ros::Duration(5.0)))
-  {
-      ROS_INFO("Waiting for the move_base action server to come up");
-  }
-
-  goal.target_pose.header.frame_id = "map";
-
-  set_goal(goal, argv[argc-1]);
-  goal.target_pose.header.stamp = ros::Time::now();
-  ROS_INFO("Sending goal");
-  ac.sendGoal(goal,doneCb);
-  ac.waitForResult();
-  
-
-  if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-  {
-      ROS_INFO("Hooray, mission accomplished");
-  }
-  else
-  {
-      ROS_INFO("[Error] mission could not be accomplished");
-  }
-  */
   ros::spin();
   return 0;
 }
