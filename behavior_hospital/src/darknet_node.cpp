@@ -44,7 +44,7 @@ public:
         {
             if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability > 0.35)
             {
-                //ROS_INFO("%ld,%ld",box_msg->bounding_boxes[iter].xmax,box_msg->bounding_boxes[iter].xmin);
+                ROS_INFO("Point %ld,%ld\n",box_msg->bounding_boxes[iter].xmax,box_msg->bounding_boxes[iter].xmin);
 
                 finish_detection_.publish(box_msg->bounding_boxes[iter]);
             }
