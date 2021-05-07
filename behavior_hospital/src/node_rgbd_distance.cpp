@@ -1,4 +1,4 @@
-// Copyright 2019 Intelligent Robotics Lab
+// Copyright 2021 ROScon de Reyes
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,6 @@
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
 
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-
 class RGBDFilter
 {
 public:
@@ -49,7 +47,7 @@ public:
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
   {
-    double x,y,z;
+    double x, y, z;
     sensor_msgs::PointCloud2 cloud;
 
     try
@@ -65,7 +63,7 @@ public:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::fromROSMsg(cloud, *pcrgb);
 
-    auto point3d = pcrgb->at(coor2dx_,coor2dy_);
+    auto point3d = pcrgb->at(coor2dx_, coor2dy_);
     if (!(std::isnan(point3d.x) || std::isnan(point3d.y) || std::isnan(point3d.z)))
     {
       coor3dx_ = point3d.x;
@@ -90,7 +88,6 @@ public:
       ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
       return;
     }
-
   }
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
@@ -102,7 +99,6 @@ public:
   }
 
 private:
-  
   ros::NodeHandle nh_;
 
   ros::Subscriber cloud_sub_;
@@ -118,7 +114,6 @@ private:
   float coor3dx_;
   float coor3dy_;
   float coor3dz_;
-
 };
 
 int main(int argc, char** argv)
