@@ -1,3 +1,17 @@
+// Copyright 2021 ROScon de Reyes
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <string>
 #include <vector>
 
@@ -26,33 +40,27 @@
 class DarknetDetection
 {
 public:
-    DarknetDetection(char *object)
+    explicit DarknetDetection(char *object)
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
         finish_detection_ = nh_.advertise<darknet_ros_msgs::BoundingBox>("/detected", 1);
         to_detect_ = object;
-
     }
 
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
     {
-        //darknet_ros_msgs::BoundingBoxes object_detected_;     
+        int size = box_msg->bounding_boxes.size();
 
-		int size = box_msg->bounding_boxes.size();
-	
-        for(int iter = 0; iter <= size; iter++)
+        for (int iter = 0; iter <= size; iter++)
         {
             if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability > 0.35)
             {
-                ROS_INFO("Point %ld,%ld\n",box_msg->bounding_boxes[iter].xmax,box_msg->bounding_boxes[iter].xmin);
+                ROS_INFO("Point %ld,%ld\n", box_msg->bounding_boxes[iter].xmax, box_msg->bounding_boxes[iter].xmin);
 
                 finish_detection_.publish(box_msg->bounding_boxes[iter]);
             }
-            
         }
-		
-	}
-
+    }
 
 private:
     ros::NodeHandle nh_;
@@ -60,10 +68,12 @@ private:
     ros::Subscriber object_detection_;
     ros::Publisher finish_detection_;
 
-
-    float coor2dx_,coor2dy_,coor3dx_,coor3dy_,coor3dz_;
+    float coor2dx_;
+    float coor2dy_;
+    float coor3dx_;
+    float coor3dy_;
+    float coor3dz_;
     char *to_detect_;
-
 };
 
 int main(int argc, char** argv)
@@ -75,7 +85,6 @@ int main(int argc, char** argv)
     ros::Rate loop_rate(20);
     while (ros::ok())
     {
-
         ros::spinOnce();
         loop_rate.sleep();
     }

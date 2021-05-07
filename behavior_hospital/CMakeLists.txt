@@ -50,4 +50,5 @@ target_link_libraries(darknet_node ${catkin_LIBRARIES})
 
 roslint_cpp(
   src/node_rgbd_distance.cpp
+  src/darknet_node.cpp
 )
