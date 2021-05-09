@@ -69,24 +69,22 @@ public:
       coor3dx_ = point3d.x;
       coor3dy_ = point3d.y;
       coor3dz_ = point3d.z;
-    }
+      tf::StampedTransform transform;
+      transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
+      transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
 
-    tf::StampedTransform transform;
-    transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
-    transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
-
-    transform.stamp_ = ros::Time::now();
-    transform.frame_id_ = "/base_footprint";
-    transform.child_frame_id_ = object_;
-
-    try
-    {
-      tfBroadcaster_.sendTransform(transform);
-    }
-    catch(tf::TransformException& ex)
-    {
-      ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
-      return;
+      transform.stamp_ = ros::Time::now();
+      transform.frame_id_ = "/base_footprint";
+      transform.child_frame_id_ = object_;
+      try
+      {
+        tfBroadcaster_.sendTransform(transform);
+      }
+      catch(tf::TransformException& ex)
+      {
+        ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
+        return;
+      }
     }
   }
 
