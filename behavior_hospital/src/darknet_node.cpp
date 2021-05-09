@@ -40,7 +40,7 @@
 class DarknetDetection
 {
 public:
-    explicit DarknetDetection(char *object)
+    explicit DarknetDetection(std::string object)
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
         finish_detection_ = nh_.advertise<darknet_ros_msgs::BoundingBox>("/detected", 1);
@@ -53,9 +53,10 @@ public:
 
         for (int iter = 0; iter <= size; iter++)
         {
-            if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability > 0.35)
+            if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability >= 0.35)
             {
-                ROS_INFO("Point %ld,%ld\n", box_msg->bounding_boxes[iter].xmax, box_msg->bounding_boxes[iter].xmin);
+                ROS_INFO("Point xmin: %ld, xmax: %ld\n", box_msg->bounding_boxes[iter].xmin, box_msg->bounding_boxes[iter].xmax);
+                ROS_INFO("Point ymin: %ld, ymax: %ld\n", box_msg->bounding_boxes[iter].ymin, box_msg->bounding_boxes[iter].ymax);
 
                 finish_detection_.publish(box_msg->bounding_boxes[iter]);
             }
@@ -73,7 +74,7 @@ private:
     float coor3dx_;
     float coor3dy_;
     float coor3dz_;
-    char *to_detect_;
+    std::string to_detect_;
 };
 
 int main(int argc, char** argv)
@@ -82,11 +83,9 @@ int main(int argc, char** argv)
 
     DarknetDetection dd = DarknetDetection(argv[2]);
 
-    ros::Rate loop_rate(20);
-    while (ros::ok())
-    {
-        ros::spinOnce();
-        loop_rate.sleep();
-    }
+    //ros::Rate loop_rate(20);
+    // Puede ser solo spin
+    ros::spin();
+  
     return 0;
 }
