@@ -1,0 +1,7 @@
+ <root main_tree_to_execute = "MainTree" >
+     <BehaviorTree ID="MainTree">
+        <Sequence name="root_sequence">
+            <darknet_detector name="darknet_detector"/>
+        </Sequence>
+     </BehaviorTree>
+ </root>

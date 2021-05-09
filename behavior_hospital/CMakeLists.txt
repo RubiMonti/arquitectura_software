@@ -25,7 +25,7 @@ catkin_package(
 )
 
 include_directories(
-  #include
+  include
   ${catkin_INCLUDE_DIRS} 
   ${PCL_INCLUDE_DIRS}
 )
@@ -40,6 +40,13 @@ set(LINK_LIBS
   hospital_navigation
   ${catkin_LIBRARIES}
 )
+
+add_executable(behavior_hospital_node
+  src/behavior_hospital_node.cpp
+  src/behavior_hospital/darknet_detector.cpp
+  src/behavior_hospital/rgbd_distance.cpp)
+target_link_libraries(behavior_hospital_node ${catkin_LIBRARIES})
+
 
 add_executable(node_rgbd_distance src/node_rgbd_distance.cpp)
 target_link_libraries(node_rgbd_distance ${catkin_LIBRARIES})

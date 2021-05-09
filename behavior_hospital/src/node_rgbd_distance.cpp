@@ -114,6 +114,7 @@ public:
   {
     if (coor2dx_ != 0 && coor2dy_ != 0)
     {
+
       coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
       coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
       object_ = objmsg->Class;
@@ -139,8 +140,6 @@ public:
     odom2bf_msg.header.stamp = ros::Time::now();
 
     tfBroadcaster_.sendTransform(odom2bf_msg);
-
-
   }
 
 private:
