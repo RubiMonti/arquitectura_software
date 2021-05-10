@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "behavior_hospital/darknet_detector.h"
+#include "behavior_hospital/rgbd_distance.h"
 
 #include "ros/ros.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -28,6 +29,7 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<behavior_hospital::DarknetDetector>("DarknetDetector");
+  factory.registerNodeType<behavior_hospital::RGBDDistance>("RGBDDistance");
 
 
   std::string pkgpath = ros::package::getPath("behavior_hospital");
@@ -36,8 +38,6 @@ int main(int argc, char **argv)
   BT::Tree tree = factory.createTreeFromFile(xml_file);
 
   ros::Rate loop_rate(5);
-
-  int count = 0;
 
   bool finish = false;
   while (ros::ok() && !finish)
