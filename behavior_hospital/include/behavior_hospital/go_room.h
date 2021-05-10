@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
-#define BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
+#ifndef BEHAVIOR_HOSPITAL_GOROOM_H
+#define BEHAVIOR_HOSPITAL_GOROOM_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -45,33 +45,29 @@
 namespace behavior_hospital
 {
 
-class RGBDDistance : public BT::ActionNodeBase
+// typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+class GoRoom : public BT::ActionNodeBase
 {
-public:
-  explicit RGBDDistance(const std::string& name);
+    public:
+    explicit GoRoom(const std::string& name);
 
-  void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in);
-  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg);
+    void set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg);
+    // static void doneCb(const actionlib::SimpleClientGoalState& state, const move_base_msgs::MoveBaseResultConstPtr& result);
 
-  void halt();
-  BT::NodeStatus tick();
+    void halt();
+    BT::NodeStatus tick();
 
-private:
-  ros::NodeHandle nh_;
+    private:
+    ros::NodeHandle nh_;
 
-  ros::Subscriber cloud_sub_;
-  ros::Subscriber object_sub_;
+    //MoveBaseClient ac; //("move_base", true);
+    move_base_msgs::MoveBaseGoal goal_;
 
-  tf::TransformBroadcaster tfBroadcaster_;
-  tf::TransformListener tfListener_;
-
-  std::string object_;
-  bool done_;
-
-  float coor2dx_;
-  float coor2dy_;
+    std::string room_;
+    bool first_;
 };
 
 }  // namespace behavior_hospital
 
-#endif  // BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
+#endif  // BEHAVIOR_HOSPITAL_GOROOM_H

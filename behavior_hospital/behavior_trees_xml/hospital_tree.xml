@@ -1,7 +1,9 @@
  <root main_tree_to_execute = "MainTree" >
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
+            <go_room name="go_room"/>
             <darknet_detector name="darknet_detector"/>
+            <rgbd_distance name="rgbd_distance"/>
         </Sequence>
      </BehaviorTree>
  </root>

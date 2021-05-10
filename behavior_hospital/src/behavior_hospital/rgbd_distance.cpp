@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+
 #include "behavior_hospital/rgbd_distance.h"
+
+#include "behaviortree_cpp_v3/behavior_tree.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
+
+#include "ros/ros.h"
 
 namespace behavior_hospital
 {
 
 RGBDDistance::RGBDDistance(const std::string& name)
-: BT::ActionNodeBase(name, {})
+: BT::ActionNodeBase(name, {}), done_(false)
 {
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDDistance::cloudCB, this);
     object_sub_ = nh_.subscribe("/detected", 1, &RGBDDistance::calculatePoint2D, this);
@@ -29,6 +36,7 @@ RGBDDistance::cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
 {
     sensor_msgs::PointCloud2 cloud;
 
+    float coor3dx, coor3dy, coor3dz;
     try
     {
         pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud, tfListener_);
@@ -47,11 +55,11 @@ RGBDDistance::cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
     {
         return;
     }
-    coor3dx_ = point3d.x;
-    coor3dy_ = point3d.y;
-    coor3dz_ = point3d.z;
+    coor3dx = point3d.x;
+    coor3dy = point3d.y;
+    coor3dz = point3d.z;
     tf::StampedTransform transform;
-    transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
+    transform.setOrigin(tf::Vector3(coor3dx, coor3dy, coor3dz));
     transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
 
     transform.stamp_ = ros::Time::now();
@@ -59,13 +67,14 @@ RGBDDistance::cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
     transform.child_frame_id_ = object_;
     try
     {
-    tfBroadcaster_.sendTransform(transform);
+        tfBroadcaster_.sendTransform(transform);
     }
     catch(tf::TransformException& ex)
     {
-    ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
-    return;
+        ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
+        return;
     }
+    done_ = true;
 }
 
 void
@@ -74,6 +83,27 @@ RGBDDistance::calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& ob
     coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
     coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
     object_ = objmsg->Class;
+}
+
+void
+RGBDDistance::halt()
+{
+  ROS_INFO("RGBDDistance halt");
+}
+
+BT::NodeStatus
+RGBDDistance::tick()
+{
+  ROS_INFO("RGBDDistance tick");
+
+  if (done_)
+  {
+    return BT::NodeStatus::SUCCESS;
+  }
+  else
+  {
+    return BT::NodeStatus::RUNNING;
+  }
 }
 
 }  // namespace behavior_hospital

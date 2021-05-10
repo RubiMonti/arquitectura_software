@@ -16,11 +16,12 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   pcl_conversions
   pcl_ros
+  behaviortree_cpp_v3
 )
 
 catkin_package(
  
-  CATKIN_DEPENDS roscpp actionlib move_base_msgs std_msgs kobuki_msgs sensor_msgs cv_bridge darknet_ros_msgs
+  CATKIN_DEPENDS roscpp actionlib move_base_msgs std_msgs kobuki_msgs sensor_msgs cv_bridge darknet_ros_msgs behaviortree_cpp_v3
   image_transport pcl_conversions pcl_ros
 )
 
@@ -44,7 +45,9 @@ set(LINK_LIBS
 add_executable(behavior_hospital_node
   src/behavior_hospital_node.cpp
   src/behavior_hospital/darknet_detector.cpp
-  src/behavior_hospital/rgbd_distance.cpp)
+  src/behavior_hospital/rgbd_distance.cpp
+  src/behavior_hospital/go_room.cpp
+  )
 target_link_libraries(behavior_hospital_node ${catkin_LIBRARIES})
 
 

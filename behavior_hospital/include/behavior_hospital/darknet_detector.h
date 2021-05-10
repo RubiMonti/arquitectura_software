@@ -62,12 +62,9 @@ class DarknetDetector : public BT::ActionNodeBase
     ros::Subscriber object_detection_;
     ros::Publisher finish_detection_;
 
-    float         coor2dx_;
-    float         coor2dy_;
-    float         coor3dx_;
-    float         coor3dy_;
-    float         coor3dz_;
-    std::string   to_detect_;};
+    std::string   to_detect_;
+    bool done_;
+    };
 
 }  // namespace behavior_hospital
 
