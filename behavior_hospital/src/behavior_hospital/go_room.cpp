@@ -14,6 +14,7 @@
 
 #include <string>
 
+
 #include "behavior_hospital/go_room.h"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -25,7 +26,7 @@ namespace behavior_hospital
 {
 
 GoRoom::GoRoom(const std::string& name, const BT::NodeConfiguration& config)
-: BT::ActionNodeBase(name, {}), ac("move_base",true)
+: BT::ActionNodeBase(name,config), ac("move_base",true)
 {
 }
 
@@ -91,24 +92,30 @@ BT::NodeStatus
 GoRoom::tick()
 {
     ROS_INFO("GoRoom tick");
+    std::string room;
     if (status() == BT::NodeStatus::IDLE)
     {
         if (getInput<std::string>("target").has_value())
-            room_ = getInput<std::string>("target").value();
-
+        {
+            room = getInput<std::string>("target").value();
+            ROS_INFO("%s",room.c_str());
+        }
+        
         while (!ac.waitForServer(ros::Duration(5.0)))
         {
             ROS_INFO("Waiting for the move_base action server to come up");
         }
 
         goal_.target_pose.header.frame_id = "map";
-        set_goal(goal_, room_);
+        set_goal(goal_, room);
         goal_.target_pose.header.stamp = ros::Time::now();
 
         ROS_INFO("Sending goal");
         ac.sendGoal(goal_);
     }
-    // ac.waitForResult();
+
+    
+    ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::ACTIVE || 
         ac.getState() == actionlib::SimpleClientGoalState::PENDING)
     {
@@ -125,6 +132,7 @@ GoRoom::tick()
         ROS_INFO("[Error] mission could not be accomplished");
         return BT::NodeStatus::FAILURE;
     }
+    
 }
 
 }  // namespace behavior_hospital
