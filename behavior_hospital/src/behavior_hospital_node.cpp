@@ -34,13 +34,13 @@ int main(int argc, char **argv)
   factory.registerNodeType<behavior_hospital::RGBDDistance>("RGBDDistance");
 
   auto blackboard = BT::Blackboard::create();
-
+  blackboard->set<std::string>("room",argv[1]);
 
   std::string pkgpath = ros::package::getPath("behavior_hospital");
   std::string xml_file = pkgpath + "/behavior_trees_xml/hospital_tree.xml";
 
   BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
-  blackboard->set<std::string>("room","hall");
+
 
 
   ros::Rate loop_rate(5);

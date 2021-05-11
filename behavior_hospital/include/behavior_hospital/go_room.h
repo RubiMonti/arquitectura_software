@@ -68,7 +68,7 @@ class GoRoom : public BT::ActionNodeBase
     MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal goal_;
 
-    std::string room_;
+    //std::string room_;
 };
 
 }  // namespace behavior_hospital
