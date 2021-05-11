@@ -62,7 +62,7 @@ class DarknetDetector : public BT::ActionNodeBase
     ros::Subscriber object_detection_;
     ros::Publisher finish_detection_;
 
-    std::string   to_detect_;
+    std::string to_detect_;
     bool done_;
     };
 

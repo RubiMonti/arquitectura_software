@@ -27,7 +27,7 @@ namespace behavior_hospital
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 GoRoom::GoRoom(const std::string& name)
-: BT::ActionNodeBase(name, {})
+: BT::ActionNodeBase(name, {}) ,ac("move_base",true)
 {
     // Aqui tendriamos que meter la habitacion
     room_ = "hall";
@@ -103,8 +103,9 @@ GoRoom::halt()
 BT::NodeStatus
 GoRoom::tick()
 {
+    std::string room = getInput<std::string>("target").value(); 
+    ROS_INFO("HABITACIONNNN%s",room.c_str());
     ROS_INFO("GoRoom tick");
-    MoveBaseClient ac("move_base",true);
     if (first_)
     {
         
@@ -121,7 +122,7 @@ GoRoom::tick()
         ac.sendGoal(goal_);// , doneCb);
         first_ = false;
     }
-    // ac.waitForResult();
+    ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::ACTIVE || 
         ac.getState() == actionlib::SimpleClientGoalState::PENDING)
     {

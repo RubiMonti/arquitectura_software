@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "behavior_hospital/go_room.h"
 #include "behavior_hospital/darknet_detector.h"
 #include "behavior_hospital/rgbd_distance.h"
 
@@ -28,14 +29,19 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
+  factory.registerNodeType<behavior_hospital::GoRoom>("GoRoom");
   factory.registerNodeType<behavior_hospital::DarknetDetector>("DarknetDetector");
   factory.registerNodeType<behavior_hospital::RGBDDistance>("RGBDDistance");
+
+  auto blackboard = BT::Blackboard::create();
 
 
   std::string pkgpath = ros::package::getPath("behavior_hospital");
   std::string xml_file = pkgpath + "/behavior_trees_xml/hospital_tree.xml";
 
-  BT::Tree tree = factory.createTreeFromFile(xml_file);
+  BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
+  blackboard->set<std::string>("room","hall");
+
 
   ros::Rate loop_rate(5);
 
