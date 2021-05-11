@@ -1,4 +1,0 @@
-<launch>
-	<node pkg="behavior_hospital" type="darknet_node" name="Darknet" output="screen"/>
-	<node pkg="behavior_hospital" type="node_rgbd_distance" name="Distance" output="screen"/> 
-</launch>

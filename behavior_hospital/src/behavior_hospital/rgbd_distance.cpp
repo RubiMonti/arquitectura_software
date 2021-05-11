@@ -53,7 +53,7 @@ RGBDDistance::cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
     auto point3d = pcrgb->at(coor2dx_, coor2dy_);
     if (std::isnan(point3d.x) || std::isnan(point3d.y) || std::isnan(point3d.z))
     {
-        return;
+      return;
     }
     coor3dx = point3d.x;
     coor3dy = point3d.y;
