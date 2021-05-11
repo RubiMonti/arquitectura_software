@@ -50,10 +50,10 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 class GoRoom : public BT::ActionNodeBase
 {
     public:
-    explicit GoRoom(const std::string& name,const BT::NodeConfiguration& config);
+    explicit GoRoom(const std::string& name, const BT::NodeConfiguration& config);
 
     void set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg);
-    // static void doneCb(const actionlib::SimpleClientGoalState& state, const move_base_msgs::MoveBaseResultConstPtr& result);
+    void doneCb(const actionlib::SimpleClientGoalState& state, const move_base_msgs::MoveBaseResultConstPtr& result);
 
     void halt();
     BT::NodeStatus tick();
@@ -61,15 +61,14 @@ class GoRoom : public BT::ActionNodeBase
     {
         return { BT::InputPort<std::string>("target")};
     }
-
+    
     private:
     ros::NodeHandle nh_;
 
-    MoveBaseClient ac; 
+    MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal goal_;
 
     std::string room_;
-    bool first_;
 };
 
 }  // namespace behavior_hospital

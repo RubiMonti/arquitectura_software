@@ -60,7 +60,7 @@ public:
 
     try
     {
-      pcl_ros::transformPointCloud("/base_footprint", *cloud_in, cloud, tfListener_);
+      pcl_ros::transformPointCloud("map", *cloud_in, cloud, tfListener_);
     }
     catch(tf::TransformException & ex)
     {
@@ -108,6 +108,7 @@ public:
     //   ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
     //   return;
     // }
+
   }
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
@@ -125,21 +126,31 @@ public:
   void publish_transform(const float x, const float y, const float z)
   {
     geometry_msgs::TransformStamped odom2bf_msg;
+    try
+    {
+        odom2bf_msg = buffer_.lookupTransform("odom", "base_footprint", ros::Time(0));
+    }
+    catch (std::exception & e)
+    {
+        return;
+    }
 
-    odom2bf_msg.transform.translation.x = x;
-    odom2bf_msg.transform.translation.y = y;
-    odom2bf_msg.transform.translation.z = z;
+    tf2::Stamped<tf2::Transform> bf2obj;
+    bf2obj.setOrigin(tf2::Vector3(x, y, z));
+    bf2obj.setRotation(tf2::Quaternion(0, 0, 0, 1));
+    
+    tf2::Stamped<tf2::Transform> odom2bf;
+    tf2::fromMsg(odom2bf_msg, odom2bf);
+    
+    tf2::Transform odom2obj = odom2bf * bf2obj;
 
-    odom2bf_msg.transform.rotation.x = 0.0;
-    odom2bf_msg.transform.rotation.y = 0.0;
-    odom2bf_msg.transform.rotation.z = 0.0;
-    odom2bf_msg.transform.rotation.w = 1.0;
+    geometry_msgs::TransformStamped map2obj_msg;
+    map2obj_msg.header.frame_id = "map";
+    map2obj_msg.child_frame_id = object_;
+    map2obj_msg.header.stamp = ros::Time::now();
+    map2obj_msg.transform = tf2::toMsg(odom2obj);
 
-    odom2bf_msg.header.frame_id = "base_footprint";
-    odom2bf_msg.child_frame_id = object_;
-    odom2bf_msg.header.stamp = ros::Time::now();
-
-    tfBroadcaster_.sendTransform(odom2bf_msg);
+    tfBroadcaster_.sendTransform(map2obj_msg);
   }
 
 private:
@@ -148,6 +159,7 @@ private:
   ros::Subscriber cloud_sub_;
   ros::Subscriber object_sub_;
 
+  tf2_ros::Buffer buffer_;
   tf2_ros::StaticTransformBroadcaster tfBroadcaster_;
   tf::TransformListener tfListener_;
 
@@ -155,9 +167,6 @@ private:
 
   int coor2dx_;
   int coor2dy_;
-  float coor3dx_;
-  float coor3dy_;
-  float coor3dz_;
 };
 
 int main(int argc, char** argv)

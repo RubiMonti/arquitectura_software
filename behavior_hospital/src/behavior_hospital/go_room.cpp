@@ -24,14 +24,9 @@
 namespace behavior_hospital
 {
 
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-
-GoRoom::GoRoom(const std::string& name)
-: BT::ActionNodeBase(name, {}) ,ac("move_base",true)
+GoRoom::GoRoom(const std::string& name, const BT::NodeConfiguration& config)
+: BT::ActionNodeBase(name, {}), ac("move_base",true)
 {
-    // Aqui tendriamos que meter la habitacion
-    room_ = "hall";
-    first_ = true;
 }
 
 void 
@@ -86,14 +81,6 @@ GoRoom::set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg)
     goal.target_pose.pose.orientation.w = 0.0013;
 }
 
-/*
-static void
-GoRoom::doneCb(const actionlib::SimpleClientGoalState& state, const move_base_msgs::MoveBaseResultConstPtr& result)
-{
-    ROS_INFO("Finished in state [%s]", state.toString().c_str());
-}
-*/
-
 void
 GoRoom::halt()
 {
@@ -103,12 +90,12 @@ GoRoom::halt()
 BT::NodeStatus
 GoRoom::tick()
 {
-    std::string room = getInput<std::string>("target").value(); 
-    ROS_INFO("HABITACIONNNN%s",room.c_str());
     ROS_INFO("GoRoom tick");
-    if (first_)
+    if (status() == BT::NodeStatus::IDLE)
     {
-        
+        if (getInput<std::string>("target").has_value())
+            room_ = getInput<std::string>("target").value();
+
         while (!ac.waitForServer(ros::Duration(5.0)))
         {
             ROS_INFO("Waiting for the move_base action server to come up");
@@ -119,10 +106,9 @@ GoRoom::tick()
         goal_.target_pose.header.stamp = ros::Time::now();
 
         ROS_INFO("Sending goal");
-        ac.sendGoal(goal_);// , doneCb);
-        first_ = false;
+        ac.sendGoal(goal_);
     }
-    ac.waitForResult();
+    // ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::ACTIVE || 
         ac.getState() == actionlib::SimpleClientGoalState::PENDING)
     {
