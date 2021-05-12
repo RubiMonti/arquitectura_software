@@ -36,6 +36,10 @@
 
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
+#include "std_msgs/Bool.h"
+
+
+
 
 class DarknetDetection
 {
@@ -44,22 +48,37 @@ public:
     {
         object_detection_ = nh_.subscribe("/darknet_ros/bounding_boxes", 1, &DarknetDetection::objectCallback, this);
         finish_detection_ = nh_.advertise<darknet_ros_msgs::BoundingBox>("/detected", 1);
+        arrived_sub_ = nh_.subscribe("arrived", 1, &DarknetDetection::messageCallback, this);
         to_detect_ = object;
     }
 
+    void messageCallback(const std_msgs::Bool::ConstPtr& msg)
+    {
+        ROS_INFO("Message: [%i]", msg->data);
+        arrived_ = msg->data;
+    }
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
     {
         int size = box_msg->bounding_boxes.size();
+        ROS_INFO("PATATAAAAAAA");
+        ROS_INFO("%i",arrived_);
 
-        for (int iter = 0; iter <= size; iter++)
+
+        if(arrived_)
         {
-            if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability >= 0.35)
+            for (int iter = 0; iter <= size; iter++)
             {
-                ROS_INFO("Point xmin: %ld, xmax: %ld\n", box_msg->bounding_boxes[iter].xmin, box_msg->bounding_boxes[iter].xmax);
-                ROS_INFO("Point ymin: %ld, ymax: %ld\n", box_msg->bounding_boxes[iter].ymin, box_msg->bounding_boxes[iter].ymax);
+                if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability >= 0.35)
+                {
+                    ROS_INFO("Point xmin: %ld, xmax: %ld\n", box_msg->bounding_boxes[iter].xmin, box_msg->bounding_boxes[iter].xmax);
+                    ROS_INFO("Point ymin: %ld, ymax: %ld\n", box_msg->bounding_boxes[iter].ymin, box_msg->bounding_boxes[iter].ymax);
 
-                finish_detection_.publish(box_msg->bounding_boxes[iter]);
+                    finish_detection_.publish(box_msg->bounding_boxes[iter]);
+                }
             }
+        }
+        else{
+            ROS_INFO("LLEGANDO A HABITACION");
         }
     }
 
@@ -75,6 +94,8 @@ private:
     float coor3dy_;
     float coor3dz_;
     std::string to_detect_;
+    ros::Subscriber arrived_sub_;
+    bool arrived_;
 };
 
 int main(int argc, char** argv)

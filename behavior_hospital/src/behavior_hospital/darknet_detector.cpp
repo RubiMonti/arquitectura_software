@@ -32,6 +32,7 @@ DarknetDetector::DarknetDetector(const std::string& name)//, std::string object)
     //to_detect_ = object;
 }
 
+
 void
 DarknetDetector::objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
 {
