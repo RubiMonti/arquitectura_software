@@ -83,8 +83,6 @@ int main(int argc, char** argv)
 
     DarknetDetection dd = DarknetDetection(argv[2]);
 
-    //ros::Rate loop_rate(20);
-    // Puede ser solo spin
     ros::spin();
   
     return 0;
