@@ -30,8 +30,6 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<behavior_hospital::GoRoom>("GoRoom");
-  factory.registerNodeType<behavior_hospital::DarknetDetector>("DarknetDetector");
-  factory.registerNodeType<behavior_hospital::RGBDDistance>("RGBDDistance");
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set<std::string>("room",argv[1]);
@@ -40,7 +38,6 @@ int main(int argc, char **argv)
   std::string xml_file = pkgpath + "/behavior_trees_xml/hospital_tree.xml";
 
   BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
-
 
 
   ros::Rate loop_rate(5);

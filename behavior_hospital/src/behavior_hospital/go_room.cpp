@@ -21,13 +21,15 @@
 #include "behaviortree_cpp_v3/bt_factory.h"
 
 #include "ros/ros.h"
+#include "std_msgs/Bool.h"
 
 namespace behavior_hospital
 {
 
 GoRoom::GoRoom(const std::string& name, const BT::NodeConfiguration& config)
-: BT::ActionNodeBase(name,config), ac("move_base",true)
+: BT::ActionNodeBase(name,config), ac("move_base",true) 
 {
+    arrived_pub = nh_.advertise<std_msgs::Bool>("/arrived", 1);
 }
 
 void 
@@ -75,6 +77,12 @@ GoRoom::set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg)
         goal.target_pose.pose.position.x = 12.47;
         goal.target_pose.pose.position.y = -7.72;
     }
+    else if (arg == "punto")
+    {
+        ROS_INFO("Going to storage2\n");
+        goal.target_pose.pose.position.x = 0.0;
+        goal.target_pose.pose.position.y = -5.0;
+    }
     else
     {
         ROS_INFO("No input detected.\nPossible inputs: Office1, Office2, Hall, Room1, Room2, Storage1, Storage2.\n");
@@ -91,6 +99,8 @@ GoRoom::halt()
 BT::NodeStatus
 GoRoom::tick()
 {
+    std_msgs::Bool msg;
+
     ROS_INFO("GoRoom tick");
     std::string room;
     if (status() == BT::NodeStatus::IDLE)
@@ -114,7 +124,6 @@ GoRoom::tick()
         ac.sendGoal(goal_);
     }
 
-    
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::ACTIVE || 
         ac.getState() == actionlib::SimpleClientGoalState::PENDING)
@@ -125,6 +134,8 @@ GoRoom::tick()
     else if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("Hooray, mission accomplished");
+        msg.data = true;
+        arrived_pub.publish(msg);
         return BT::NodeStatus::SUCCESS;
     }
     else

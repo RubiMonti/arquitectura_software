@@ -41,6 +41,7 @@
 
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
+#include "std_msgs/Bool.h"
 
 namespace behavior_hospital
 {
@@ -67,6 +68,8 @@ class GoRoom : public BT::ActionNodeBase
 
     MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal goal_;
+    ros::Publisher arrived_pub;
+
 
     //std::string room_;
 };
