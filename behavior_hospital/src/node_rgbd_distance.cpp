@@ -47,7 +47,7 @@
 class RGBDFilter
 {
 public:
-  RGBDFilter()
+  RGBDFilter() : buffer_(), listener_(buffer_)
   {
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
     object_sub_ = nh_.subscribe("/detected", 1, &RGBDFilter::calculatePoint2D, this);
@@ -55,12 +55,9 @@ public:
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
   {
-    //double x, y, z;
-    sensor_msgs::PointCloud2 cloud;
-
     try
     {
-      pcl_ros::transformPointCloud("map", *cloud_in, cloud, tfListener_);
+      pcl_ros::transformPointCloud("camera_link", *cloud_in, cloud_point_, tfListener_);
     }
     catch(tf::TransformException & ex)
     {
@@ -68,63 +65,33 @@ public:
       return;
     }
 
-    //if (!(std::isnan(point3d.x) || std::isnan(point3d.y) || std::isnan(point3d.z)))
-    //{
-      if (coor2dx_ != 0 && coor2dy_ != 0)
-      {
-        //pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
-        
-        auto pcrgb = std::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
-        pcl::fromROSMsg(cloud, *pcrgb);
-
-        auto point3d = pcrgb->at(coor2dx_, coor2dy_);
-
-        if (!(std::isnan(point3d.x) || std::isnan(point3d.y) || std::isnan(point3d.z)))
-        {
-          ROS_INFO("(%f, %f, %f)", point3d.x, point3d.y, point3d.z);
-          publish_transform(point3d.x, point3d.y, point3d.z);
-        }
-      
-      // coor3dx_ = point3d.x;
-      // coor3dy_ = point3d.y;
-      // coor3dz_ = point3d.z;
-    //}
-      }
-
-    // tf::StampedTransform transform;
-    // transform.setOrigin(tf::Vector3(coor3dx_, coor3dy_, coor3dz_));
-    // transform.setRotation(tf::Quaternion(0.0, 0.0, 0.0, 1.0));
-
-    // transform.stamp_ = ros::Time::now();
-    // transform.frame_id_ = "map";
-    // transform.child_frame_id_ = object_;
-
-    // try
-    // {
-    //   tfBroadcaster_.sendTransform(transform);
-    // }
-    // catch(tf::TransformException& ex)
-    // {
-    //   ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
-    //   return;
-    // }
-
   }
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
   {
-    if (coor2dx_ != 0 && coor2dy_ != 0)
-    {
-
-      coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
-      coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
+      int coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
+      int coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
       object_ = objmsg->Class;
-    }
-    std::cout << "(" << coor2dx_ << "," << coor2dy_ << ")" << std::endl;
+
+      ROS_INFO("COORDENADAAAAASSSS: (%d, %d)", coor2dx_, coor2dy_);
+
+      pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
+      pcl::fromROSMsg(cloud_point_, *pcrgb);
+
+      if ((std::isnan(coor2dx_) || std::isnan(coor2dy_)) || !(pcrgb))
+      {
+        return;
+      }
+        auto point3d = pcrgb->at(coor2dx_, coor2dy_);
+      
+        ROS_INFO("PUNTOS: (%f, %f, %f)", point3d.x, point3d.y, point3d.z);
+        publish_transform(point3d.x, point3d.y, point3d.z);
+
   }
 
   void publish_transform(const float x, const float y, const float z)
   {
+
     geometry_msgs::TransformStamped odom2bf_msg;
     try
     {
@@ -149,7 +116,6 @@ public:
     map2obj_msg.child_frame_id = object_;
     map2obj_msg.header.stamp = ros::Time::now();
     map2obj_msg.transform = tf2::toMsg(odom2obj);
-
     tfBroadcaster_.sendTransform(map2obj_msg);
   }
 
@@ -162,11 +128,11 @@ private:
   tf2_ros::Buffer buffer_;
   tf2_ros::StaticTransformBroadcaster tfBroadcaster_;
   tf::TransformListener tfListener_;
+  tf2_ros::TransformListener listener_;
 
   std::string object_;
 
-  int coor2dx_;
-  int coor2dy_;
+  sensor_msgs::PointCloud2 cloud_point_;
 };
 
 int main(int argc, char** argv)
