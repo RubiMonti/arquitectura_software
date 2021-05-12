@@ -1,6 +1,7 @@
 <launch>
-	<node pkg="Behavior_hospital" type="Go_goal" name="Go">
-	<node pkg="Behavior_hospital" type="Find_object" name="Find">
-	<node pkg="Behavior_hospital" type="Behavior_hospital_node" name="Behavior_hospital">
+	<node pkg="behavior_hospital" type="darknet_node" name="Darknet" output="screen"/>
+	<node pkg="behavior_hospital" type="node_rgbd_distance" name="RGBD_Distance" output="screen"/>
+	<node pkg="behavior_hospital" type="behavior_hospital_node" name="Behavior_hospital" output="screen"/>
 
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $>(find behavior_hospital)/config/rviz_config.rviz"/>
 </launch>
