@@ -43,6 +43,8 @@
 
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
+#include "geometry_msgs/Twist.h"
+
 
 class RGBDFilter
 {
@@ -51,6 +53,8 @@ public:
   {
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
     object_sub_ = nh_.subscribe("/detected", 1, &RGBDFilter::calculatePoint2D, this);
+    vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
+
   }
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
@@ -85,6 +89,7 @@ public:
         auto point3d = pcrgb->at(coor2dx_, coor2dy_);
       
         ROS_INFO("PUNTOS: (%f, %f, %f)", point3d.x, point3d.y, point3d.z);
+        ROS_INFO("%f",point3d.x);
         publish_transform(point3d.x, point3d.y, point3d.z);
 
   }
@@ -117,13 +122,66 @@ public:
     map2obj_msg.header.stamp = ros::Time::now();
     map2obj_msg.transform = tf2::toMsg(odom2obj);
     tfBroadcaster_.sendTransform(map2obj_msg);
+    step(x);
   }
+
+void step(const float x)
+{
+  bool put_transform = true;
+  double angle;
+  geometry_msgs::Twist msg2;
+  geometry_msgs::TransformStamped bf2object_2_msg;
+
+  try
+  {
+      bf2object_2_msg = buffer_.lookupTransform("base_footprint", "odom", ros::Time(0));
+  }
+  catch (std::exception & e)
+  {
+      ROS_INFO("SI ENTRA MUY MALOOOOOOOOOOOC\n");
+      put_transform = false;
+  }
+  ROS_INFO("HOLAAAAAAAAAAA\n");
+  if(put_transform && (x > 1))
+  {
+    ROS_INFO("HOLEEEEEEEEEE\n");
+    angle = atan2(bf2object_2_msg.transform.translation.y, bf2object_2_msg.transform.translation.x);
+    if (angle < -1)
+    {
+        msg2.angular.z = -0.15;
+    }
+    else if (angle > 1)
+    {
+        msg2.angular.z = 0.15;
+    }
+    else if (angle > 0.1)
+    {
+        msg2.angular.z = 0.15;
+    }
+    else if (angle < -0.1)
+    {
+        msg2.angular.z = -0.15;
+    }
+    else
+    {
+      msg2.linear.x = 0.15;
+      if (x <= 1)
+      {
+          msg2.linear.x = 0.0;
+          msg2.angular.z = 0.0;
+      }
+    }
+  }
+  vel_pub_.publish(msg2);
+
+}
 
 private:
   ros::NodeHandle nh_;
 
   ros::Subscriber cloud_sub_;
   ros::Subscriber object_sub_;
+  ros::Publisher vel_pub_;
 
   tf2_ros::Buffer buffer_;
   tf2_ros::StaticTransformBroadcaster tfBroadcaster_;

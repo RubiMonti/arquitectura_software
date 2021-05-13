@@ -42,6 +42,7 @@
 
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
+#include "std_msgs/Bool.h"
 
 namespace behavior_hospital
 {
@@ -55,6 +56,8 @@ class DarknetDetector : public BT::ActionNodeBase
     BT::NodeStatus tick();
 
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg);
+    void messageCallback(const std_msgs::Bool::ConstPtr& msg);
+
 
   private:
     ros::NodeHandle nh_;
@@ -63,6 +66,7 @@ class DarknetDetector : public BT::ActionNodeBase
     ros::Publisher finish_detection_;
 
     std::string to_detect_;
+    ros::Subscriber arrived_sub_;
     bool done_;
     };
 

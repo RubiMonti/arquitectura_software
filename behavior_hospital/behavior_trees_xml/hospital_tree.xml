@@ -2,8 +2,6 @@
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
             <GoRoom name="go_room" target="{room}"/>
-            <DarknetDetector name="darknet_detector"/>
-            <RGBDDistance name="rgbd_distance"/>
         </Sequence>
      </BehaviorTree>
  </root>
