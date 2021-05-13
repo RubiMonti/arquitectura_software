@@ -28,8 +28,13 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_types_conversion.h>
 
-#include <tf/transform_broadcaster.h>
-#include <tf/transform_listener.h>
+#include "tf2/transform_datatypes.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/static_transform_broadcaster.h"
+#include "tf2/LinearMath/Transform.h"
+#include "geometry_msgs/TransformStamped.h"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "tf2/convert.h"
 
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -48,12 +53,12 @@ namespace behavior_hospital
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-class FindAproach : public BT::ActionNodeBase
+class FindApproach : public BT::ActionNodeBase
 {
     public:
-    explicit FindAproach(const std::string& name, const BT::NodeConfiguration& config);
+    explicit FindApproach(const std::string& name, const BT::NodeConfiguration& config);
 
-    bool get_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg);
+    bool get_goal();
 
     void halt();
     BT::NodeStatus tick();
@@ -67,7 +72,6 @@ class FindAproach : public BT::ActionNodeBase
 
     MoveBaseClient ac;
     move_base_msgs::MoveBaseGoal goal_;
-    ros::Publisher arrived_pub;
 
     tf2_ros::Buffer buffer_;
     tf2_ros::StaticTransformBroadcaster tfBroadcaster_;

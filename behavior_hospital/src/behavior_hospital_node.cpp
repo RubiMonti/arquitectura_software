@@ -13,8 +13,7 @@
 // limitations under the License.
 
 #include "behavior_hospital/go_room.h"
-#include "behavior_hospital/darknet_detector.h"
-#include "behavior_hospital/rgbd_distance.h"
+#include "behavior_hospital/find_approach.h"
 
 #include "ros/ros.h"
 #include "behaviortree_cpp_v3/behavior_tree.h"
@@ -30,7 +29,7 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<behavior_hospital::GoRoom>("GoRoom");
-  factory.registerNodeType<behavior_hospital::FindObject>("FindObject");
+  factory.registerNodeType<behavior_hospital::FindApproach>("FindApproach");
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set<std::string>("room",argv[1]);

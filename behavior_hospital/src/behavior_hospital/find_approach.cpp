@@ -15,7 +15,7 @@
 #include <string>
 
 
-#include "behavior_hospital/find_object.h"
+#include "behavior_hospital/find_approach.h"
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -26,50 +26,56 @@
 namespace behavior_hospital
 {
 
-FindObject::FindObject(const std::string& name, const BT::NodeConfiguration& config)
+FindApproach::FindApproach(const std::string& name, const BT::NodeConfiguration& config)
 : BT::ActionNodeBase(name,config), ac("move_base",true), buffer_(), listener_(buffer_)
 {
-    arrived_pub = nh_.advertise<std_msgs::Bool>("/arrived", 1);
+    
 }
 
 bool 
-FindObject::get_goal()
+FindApproach::get_goal()
 {
     std::string object;
-    geometry_msgs::TransformStamped odom2object_msg;
+    geometry_msgs::TransformStamped bf2object_msg;
     if (getInput<std::string>("target").has_value())
     {
         object = getInput<std::string>("target").value();
         ROS_INFO("Objeto que va en la transformada%s",object.c_str());
     }
+
+
     try
     {
-        bf2object_msg = buffer_.lookupTransform(object, "odom", ros::Time(0));
+        bf2object_msg = buffer_.lookupTransform("base_footprint", object, ros::Time(0));
     }
     catch (std::exception & e)
     {
         ROS_INFO("SI ENTRA MUY MALOOOOOOOOOOOC\n");
         return false;
     }
+
+
+
     goal_.target_pose.header.frame_id = "base_footprint";
     goal_.target_pose.pose.orientation = bf2object_msg.transform.rotation;
-    goal_.target_pose.pose.position.x = bf2object_msg.transform.translation.x;
+    goal_.target_pose.pose.position.x = bf2object_msg.transform.translation.x - 1;
     goal_.target_pose.pose.position.y = bf2object_msg.transform.translation.y;
     goal_.target_pose.pose.position.z = bf2object_msg.transform.translation.z;
+
     return true;
 }
 
 void
-FindObject::halt()
+FindApproach::halt()
 {
-  ROS_INFO("FindObject halt");
+  ROS_INFO("FindApproach halt");
 }
 
 BT::NodeStatus
-FindObject::tick()
+FindApproach::tick()
 {
-    ROS_INFO("FindObject tick");
-    if (!(get_goal()))
+    ROS_INFO("FindApproach tick");
+    if (!(get_goal() ))
     {
         return BT::NodeStatus::FAILURE;
     }
