@@ -54,13 +54,11 @@ public:
 
     void messageCallback(const std_msgs::Bool::ConstPtr& msg)
     {
-        //ROS_INFO("Message: [%i]", msg->data);
         arrived_ = msg->data;
     }
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
     {
         int size = box_msg->bounding_boxes.size();
-        ROS_INFO("PATATAAAAAAA");
         ROS_INFO("%i",arrived_);
 
 
@@ -102,7 +100,7 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "darknet");
 
-    DarknetDetection dd = DarknetDetection(argv[2]);
+    DarknetDetection dd = DarknetDetection(argv[1]);
 
     ros::spin();
   
