@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
-#define BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
+#ifndef BEHAVIOR_HOSPITAL_FINDOBJECT_H
+#define BEHAVIOR_HOSPITAL_FINDOBJECT_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -41,37 +41,41 @@
 
 #include "move_base_msgs/MoveBaseAction.h"
 #include "actionlib/client/simple_action_client.h"
+#include "std_msgs/Bool.h"
 
 namespace behavior_hospital
 {
 
-class RGBDDistance : public BT::ActionNodeBase
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
+
+class FindAproach : public BT::ActionNodeBase
 {
-public:
-  explicit RGBDDistance(const std::string& name);
+    public:
+    explicit FindAproach(const std::string& name, const BT::NodeConfiguration& config);
 
-  void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in);
-  void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg);
+    bool get_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg);
 
-  void halt();
-  BT::NodeStatus tick();
+    void halt();
+    BT::NodeStatus tick();
+    static BT::PortsList providedPorts()
+    {
+        return { BT::InputPort<std::string>("target")};
+    }
+    
+    private:
+    ros::NodeHandle nh_;
 
-private:
-  ros::NodeHandle nh_;
+    MoveBaseClient ac;
+    move_base_msgs::MoveBaseGoal goal_;
+    ros::Publisher arrived_pub;
 
-  ros::Subscriber cloud_sub_;
-  ros::Subscriber object_sub_;
+    tf2_ros::Buffer buffer_;
+    tf2_ros::StaticTransformBroadcaster tfBroadcaster_;
+    tf2_ros::TransformListener listener_;
 
-  tf::TransformBroadcaster tfBroadcaster_;
-  tf::TransformListener tfListener_;
-
-  std::string object_;
-  bool done_;
-
-  float coor2dx_;
-  float coor2dy_;
+    //geometry_msgs::TransformStamped odom2object_msg_;
 };
 
 }  // namespace behavior_hospital
 
-#endif  // BEHAVIOR_HOSPITAL_RGBDDISTANCE_H
+#endif  // BEHAVIOR_HOSPITAL_FINDOBJECT_H
