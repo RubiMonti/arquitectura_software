@@ -30,9 +30,11 @@ int main(int argc, char **argv)
   BT::BehaviorTreeFactory factory;
 
   factory.registerNodeType<behavior_hospital::GoRoom>("GoRoom");
+  factory.registerNodeType<behavior_hospital::FindObject>("FindObject");
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set<std::string>("room",argv[1]);
+  blackboard->set<std::string>("object",argv[2]);
 
   std::string pkgpath = ros::package::getPath("behavior_hospital");
   std::string xml_file = pkgpath + "/behavior_trees_xml/hospital_tree.xml";

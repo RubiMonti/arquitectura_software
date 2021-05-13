@@ -125,13 +125,7 @@ GoRoom::tick()
     }
 
     ac.waitForResult();
-    if (ac.getState() == actionlib::SimpleClientGoalState::ACTIVE || 
-        ac.getState() == actionlib::SimpleClientGoalState::PENDING)
-    {
-        ROS_INFO("Mission is being accomplished");
-        return BT::NodeStatus::RUNNING;
-    }
-    else if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+    if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
     {
         ROS_INFO("Hooray, mission accomplished");
         msg.data = true;

@@ -122,9 +122,10 @@ public:
     map2obj_msg.header.stamp = ros::Time::now();
     map2obj_msg.transform = tf2::toMsg(odom2obj);
     tfBroadcaster_.sendTransform(map2obj_msg);
-    step(x);
+    //step(x);
   }
 
+/*
 void step(const float x)
 {
   bool put_transform = true;
@@ -171,6 +172,7 @@ void step(const float x)
   vel_pub_.publish(msg2);
 
 }
+*/
 
 private:
   ros::NodeHandle nh_;
@@ -181,8 +183,8 @@ private:
 
   tf2_ros::Buffer buffer_;
   tf2_ros::StaticTransformBroadcaster tfBroadcaster_;
-  tf::TransformListener tfListener_;
   tf2_ros::TransformListener listener_;
+  tf::TransformListener tfListener_;
 
   std::string object_;
 

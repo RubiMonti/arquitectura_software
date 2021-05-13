@@ -2,6 +2,7 @@
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
             <GoRoom name="go_room" target="{room}"/>
+            <FindObject name="find_object" target="{object}"/>
         </Sequence>
      </BehaviorTree>
  </root>
