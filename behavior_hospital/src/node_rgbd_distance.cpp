@@ -73,8 +73,8 @@ public:
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
   {
-      int coor2dx_ = (objmsg->xmin + objmsg->xmax)/2;
-      int coor2dy_ = (objmsg->ymin + objmsg->ymax)/2;
+      int coor2dx_ = (objmsg->xmin + objmsg->xmax) / 2;
+      int coor2dy_ = (objmsg->ymin + objmsg->ymax) / 2;
       object_ = objmsg->Class;
 
       ROS_INFO("COORDENADAAAAASSSS: (%d, %d)", coor2dx_, coor2dy_);
@@ -88,8 +88,8 @@ public:
       }
         auto point3d = pcrgb->at(coor2dx_, coor2dy_);
       
-        ROS_INFO("PUNTOS: (%f, %f, %f)", point3d.x, point3d.y, point3d.z);
-        ROS_INFO("%f",point3d.x);
+        //ROS_INFO("PUNTOS: (%f, %f, %f)", point3d.x, point3d.y, point3d.z);
+        //ROS_INFO("%f",point3d.x);
         publish_transform(point3d.x, point3d.y, point3d.z);
 
   }
@@ -141,37 +141,33 @@ void step(const float x)
       ROS_INFO("SI ENTRA MUY MALOOOOOOOOOOOC\n");
       put_transform = false;
   }
-  ROS_INFO("HOLAAAAAAAAAAA\n");
   if(put_transform && (x > 1))
   {
-    ROS_INFO("HOLEEEEEEEEEE\n");
+    
     angle = atan2(bf2object_2_msg.transform.translation.y, bf2object_2_msg.transform.translation.x);
-    if (angle < -1)
+    ROS_INFO ("angulo de la transformada = %f ", angle);
+    ROS_INFO("istancia al objeto = %f", x);
+    if (angle > 1)
     {
-        msg2.angular.z = -0.15;
+        msg2.angular.z = 0.1;
     }
-    else if (angle > 1)
+    else if (angle < -1)
     {
-        msg2.angular.z = 0.15;
-    }
-    else if (angle > 0.1)
-    {
-        msg2.angular.z = 0.15;
-    }
-    else if (angle < -0.1)
-    {
-        msg2.angular.z = -0.15;
+        msg2.angular.z = -0.1;
     }
     else
     {
       msg2.linear.x = 0.15;
+      msg2.angular.z = 0.0;
       if (x <= 1)
       {
+        ROS_INFO("Pa alante");
           msg2.linear.x = 0.0;
           msg2.angular.z = 0.0;
       }
     }
   }
+
   vel_pub_.publish(msg2);
 
 }
