@@ -39,7 +39,6 @@ int main(int argc, char **argv)
 
   BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
 
-
   ros::Rate loop_rate(5);
 
   bool finish = false;

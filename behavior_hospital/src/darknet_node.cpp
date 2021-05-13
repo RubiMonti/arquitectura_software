@@ -54,7 +54,7 @@ public:
 
     void messageCallback(const std_msgs::Bool::ConstPtr& msg)
     {
-        ROS_INFO("Message: [%i]", msg->data);
+        //ROS_INFO("Message: [%i]", msg->data);
         arrived_ = msg->data;
     }
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
