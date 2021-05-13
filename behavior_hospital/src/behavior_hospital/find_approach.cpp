@@ -29,7 +29,6 @@ namespace behavior_hospital
 FindApproach::FindApproach(const std::string& name, const BT::NodeConfiguration& config)
 : BT::ActionNodeBase(name,config), ac("move_base",true), buffer_(), listener_(buffer_)
 {
-    
 }
 
 bool 
@@ -37,6 +36,9 @@ FindApproach::get_goal()
 {
     std::string object;
     geometry_msgs::TransformStamped bf2object_msg;
+
+    
+
     if (getInput<std::string>("target").has_value())
     {
         object = getInput<std::string>("target").value();
@@ -50,10 +52,8 @@ FindApproach::get_goal()
     }
     catch (std::exception & e)
     {
-        ROS_INFO("SI ENTRA MUY MALOOOOOOOOOOOC\n");
         return false;
     }
-
 
 
     goal_.target_pose.header.frame_id = "base_footprint";

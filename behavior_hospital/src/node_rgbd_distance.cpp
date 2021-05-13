@@ -77,7 +77,7 @@ public:
       int coor2dy_ = (objmsg->ymin + objmsg->ymax) / 2;
       object_ = objmsg->Class;
 
-      ROS_INFO("COORDENADAAAAASSSS: (%d, %d)", coor2dx_, coor2dy_);
+      ROS_INFO("COORDENADAS: (%d, %d)", coor2dx_, coor2dy_);
 
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
       pcl::fromROSMsg(cloud_point_, *pcrgb);
@@ -87,10 +87,12 @@ public:
         return;
       }
         auto point3d = pcrgb->at(coor2dx_, coor2dy_);
-      
-        //ROS_INFO("PUNTOS: (%f, %f, %f)", point3d.x, point3d.y, point3d.z);
-        //ROS_INFO("%f",point3d.x);
-        publish_transform(point3d.x, point3d.y, point3d.z);
+     
+        if(publish_transform_)
+        {
+          publish_transform(point3d.x, point3d.y, point3d.z);
+          publish_transform_ = false;
+        }
 
   }
 
@@ -125,54 +127,7 @@ public:
     //step(x);
   }
 
-/*
-void step(const float x)
-{
-  bool put_transform = true;
-  double angle;
-  geometry_msgs::Twist msg2;
-  geometry_msgs::TransformStamped bf2object_2_msg;
 
-  try
-  {
-      bf2object_2_msg = buffer_.lookupTransform("base_footprint", "odom", ros::Time(0));
-  }
-  catch (std::exception & e)
-  {
-      ROS_INFO("SI ENTRA MUY MALOOOOOOOOOOOC\n");
-      put_transform = false;
-  }
-  if(put_transform && (x > 1))
-  {
-    
-    angle = atan2(bf2object_2_msg.transform.translation.y, bf2object_2_msg.transform.translation.x);
-    ROS_INFO ("angulo de la transformada = %f ", angle);
-    ROS_INFO("istancia al objeto = %f", x);
-    if (angle > 1)
-    {
-        msg2.angular.z = 0.1;
-    }
-    else if (angle < -1)
-    {
-        msg2.angular.z = -0.1;
-    }
-    else
-    {
-      msg2.linear.x = 0.15;
-      msg2.angular.z = 0.0;
-      if (x <= 1)
-      {
-        ROS_INFO("Pa alante");
-          msg2.linear.x = 0.0;
-          msg2.angular.z = 0.0;
-      }
-    }
-  }
-
-  vel_pub_.publish(msg2);
-
-}
-*/
 
 private:
   ros::NodeHandle nh_;
@@ -189,6 +144,7 @@ private:
   std::string object_;
 
   sensor_msgs::PointCloud2 cloud_point_;
+  bool publish_transform_ = true;
 };
 
 int main(int argc, char** argv)

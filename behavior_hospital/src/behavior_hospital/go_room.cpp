@@ -68,20 +68,14 @@ GoRoom::set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg)
     else if (arg == "storage1")
     {
         ROS_INFO("Going to storage1\n");
-        goal.target_pose.pose.position.x = 12.5;
-        goal.target_pose.pose.position.y = 7.89;
+        goal.target_pose.pose.position.x = 10.93;
+        goal.target_pose.pose.position.y = 8.14;
     }
     else if (arg == "storage2")
     {
         ROS_INFO("Going to storage2\n");
-        goal.target_pose.pose.position.x = 12.47;
-        goal.target_pose.pose.position.y = -7.72;
-    }
-    else if (arg == "punto")
-    {
-        ROS_INFO("Going to storage2\n");
-        goal.target_pose.pose.position.x = 0.0;
-        goal.target_pose.pose.position.y = -5.0;
+        goal.target_pose.pose.position.x = 10.77;
+        goal.target_pose.pose.position.y = -8.21;
     }
     else
     {
