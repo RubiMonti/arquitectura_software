@@ -29,6 +29,7 @@ namespace behavior_hospital
 FindApproach::FindApproach(const std::string& name, const BT::NodeConfiguration& config)
 : BT::ActionNodeBase(name, config), ac("move_base", true), buffer_(), listener_(buffer_)
 {
+    vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
 }
 
 bool FindApproach::get_goal()
@@ -42,7 +43,6 @@ bool FindApproach::get_goal()
         ROS_INFO("Objeto que va en la transformada%s", object.c_str());
     }
 
-
     try
     {
         bf2object_msg = buffer_.lookupTransform("base_footprint", object, ros::Time(0));
@@ -51,7 +51,6 @@ bool FindApproach::get_goal()
     {
         return false;
     }
-
 
     goal_.target_pose.header.frame_id = "base_footprint";
     goal_.target_pose.pose.orientation = bf2object_msg.transform.rotation;
@@ -71,15 +70,20 @@ FindApproach::halt()
 BT::NodeStatus
 FindApproach::tick()
 {
+    geometry_msgs::Twist msg;
+
     ROS_INFO("FindApproach tick");
-    if (!(get_goal() ))
-    {
-        return BT::NodeStatus::FAILURE;
-    }
     while (!ac.waitForServer(ros::Duration(5.0)))
     {
         ROS_INFO("Waiting for the move_base action server to come up");
     }
+    while (!( get_goal() ))
+    {
+        msg2.angular.z = 0.1;
+        vel_pub_.publish(msg2);
+    }
+    msg2.angular.z = 0.0;
+    vel_pub_.publish(msg2);
 
     goal_.target_pose.header.stamp = ros::Time::now();
     ROS_INFO("Sending goal");
