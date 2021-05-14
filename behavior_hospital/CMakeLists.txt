@@ -46,6 +46,7 @@ add_executable(behavior_hospital_node
   src/behavior_hospital_node.cpp
   src/behavior_hospital/find_approach.cpp
   src/behavior_hospital/go_room.cpp
+  src/behavior_hospital/is_room.cpp
   )
 target_link_libraries(behavior_hospital_node ${catkin_LIBRARIES})
 

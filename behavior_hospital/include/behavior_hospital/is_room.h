@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEHAVIOR_HOSPITAL_FINDOBJECT_H
-#define BEHAVIOR_HOSPITAL_FINDOBJECT_H
+#ifndef BEHAVIOR_HOSPITAL_ISROOM_H
+#define BEHAVIOR_HOSPITAL_ISROOM_H
 
 #include "behaviortree_cpp_v3/behavior_tree.h"
 #include "behaviortree_cpp_v3/bt_factory.h"
@@ -48,17 +48,20 @@
 #include "actionlib/client/simple_action_client.h"
 #include "std_msgs/Bool.h"
 
+#define CUADRADO 1
+
 namespace behavior_hospital
 {
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-class FindApproach : public BT::ActionNodeBase
+class IsRoom : public BT::ActionNodeBase
 {
     public:
-    explicit FindApproach(const std::string& name, const BT::NodeConfiguration& config);
+    explicit IsRoom(const std::string& name, const BT::NodeConfiguration& config);
 
-    bool get_goal();
+    bool get_rooms();
+    bool check_room();
 
     void halt();
     BT::NodeStatus tick();
@@ -71,8 +74,7 @@ class FindApproach : public BT::ActionNodeBase
     ros::NodeHandle nh_;
     ros::Publisher vel_pub_;
 
-    MoveBaseClient ac;
-    move_base_msgs::MoveBaseGoal goal_;
+    geometry_msgs::Point position_;
 
     tf2_ros::Buffer buffer_;
     tf2_ros::StaticTransformBroadcaster tfBroadcaster_;
@@ -85,4 +87,4 @@ class FindApproach : public BT::ActionNodeBase
 
 }  // namespace behavior_hospital
 
-#endif  // BEHAVIOR_HOSPITAL_FINDOBJECT_H
+#endif  // BEHAVIOR_HOSPITAL_ISROOM_H

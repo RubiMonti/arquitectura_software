@@ -1,6 +1,7 @@
  <root main_tree_to_execute = "MainTree" >
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
+            <IsRoom name="is_room" target="{room}"/>
             <GoRoom name="go_room" target="{room}"/>
             <FindApproach name="find_approach" target="{object}"/>
         </Sequence>
