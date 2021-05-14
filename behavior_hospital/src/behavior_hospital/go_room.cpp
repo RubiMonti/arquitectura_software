@@ -27,13 +27,12 @@ namespace behavior_hospital
 {
 
 GoRoom::GoRoom(const std::string& name, const BT::NodeConfiguration& config)
-: BT::ActionNodeBase(name,config), ac("move_base",true) 
+: BT::ActionNodeBase(name, config), ac("move_base", true)
 {
     arrived_pub = nh_.advertise<std_msgs::Bool>("/arrived", 1);
 }
 
-void 
-GoRoom::set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg)
+void GoRoom::set_goal(move_base_msgs::MoveBaseGoal& goal, std::string arg)
 {
     if (arg == "room1")
     {
@@ -102,9 +101,9 @@ GoRoom::tick()
         if (getInput<std::string>("target").has_value())
         {
             room = getInput<std::string>("target").value();
-            ROS_INFO("%s",room.c_str());
+            ROS_INFO("%s", room.c_str());
         }
-        
+
         while (!ac.waitForServer(ros::Duration(5.0)))
         {
             ROS_INFO("Waiting for the move_base action server to come up");
@@ -131,7 +130,5 @@ GoRoom::tick()
         ROS_INFO("[Error] mission could not be accomplished");
         return BT::NodeStatus::FAILURE;
     }
-    
 }
-
 }  // namespace behavior_hospital

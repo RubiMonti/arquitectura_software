@@ -54,7 +54,6 @@ public:
     cloud_sub_ = nh_.subscribe("/camera/depth/points", 1, &RGBDFilter::cloudCB, this);
     object_sub_ = nh_.subscribe("/detected", 1, &RGBDFilter::calculatePoint2D, this);
     vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/mobile_base/commands/velocity", 1);
-
   }
 
   void cloudCB(const sensor_msgs::PointCloud2::ConstPtr& cloud_in)
@@ -68,7 +67,6 @@ public:
       ROS_ERROR_STREAM("Transform error of sensor data: " << ex.what() << ", quitting callback");
       return;
     }
-
   }
 
   void calculatePoint2D(const darknet_ros_msgs::BoundingBox::ConstPtr& objmsg)
@@ -82,23 +80,20 @@ public:
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcrgb(new pcl::PointCloud<pcl::PointXYZRGB>);
       pcl::fromROSMsg(cloud_point_, *pcrgb);
 
-      if ((std::isnan(coor2dx_) || std::isnan(coor2dy_)) || !(pcrgb))
+      if ( (std::isnan(coor2dx_) || std::isnan(coor2dy_)) || !(pcrgb))
       {
         return;
       }
         auto point3d = pcrgb->at(coor2dx_, coor2dy_);
-     
-        if(publish_transform_)
+        if (publish_transform_)
         {
           publish_transform(point3d.x, point3d.y, point3d.z);
           publish_transform_ = false;
         }
-
   }
 
   void publish_transform(const float x, const float y, const float z)
   {
-
     geometry_msgs::TransformStamped odom2bf_msg;
     try
     {
@@ -112,19 +107,15 @@ public:
     tf2::Stamped<tf2::Transform> bf2obj;
     bf2obj.setOrigin(tf2::Vector3(x, y, z));
     bf2obj.setRotation(tf2::Quaternion(0, 0, 0, 1));
-    
     tf2::Stamped<tf2::Transform> odom2bf;
     tf2::fromMsg(odom2bf_msg, odom2bf);
-    
     tf2::Transform odom2obj = odom2bf * bf2obj;
-
     geometry_msgs::TransformStamped map2obj_msg;
     map2obj_msg.header.frame_id = "map";
     map2obj_msg.child_frame_id = object_;
     map2obj_msg.header.stamp = ros::Time::now();
     map2obj_msg.transform = tf2::toMsg(odom2obj);
     tfBroadcaster_.sendTransform(map2obj_msg);
-    //step(x);
   }
 
 

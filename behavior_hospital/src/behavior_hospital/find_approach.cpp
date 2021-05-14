@@ -27,22 +27,19 @@ namespace behavior_hospital
 {
 
 FindApproach::FindApproach(const std::string& name, const BT::NodeConfiguration& config)
-: BT::ActionNodeBase(name,config), ac("move_base",true), buffer_(), listener_(buffer_)
+: BT::ActionNodeBase(name, config), ac("move_base", true), buffer_(), listener_(buffer_)
 {
 }
 
-bool 
-FindApproach::get_goal()
+bool FindApproach::get_goal()
 {
     std::string object;
     geometry_msgs::TransformStamped bf2object_msg;
 
-    
-
     if (getInput<std::string>("target").has_value())
     {
         object = getInput<std::string>("target").value();
-        ROS_INFO("Objeto que va en la transformada%s",object.c_str());
+        ROS_INFO("Objeto que va en la transformada%s", object.c_str());
     }
 
 
@@ -83,6 +80,7 @@ FindApproach::tick()
     {
         ROS_INFO("Waiting for the move_base action server to come up");
     }
+
     goal_.target_pose.header.stamp = ros::Time::now();
     ROS_INFO("Sending goal");
     ac.sendGoal(goal_);
@@ -98,7 +96,5 @@ FindApproach::tick()
         ROS_INFO("[Error] mission could not be accomplished");
         return BT::NodeStatus::FAILURE;
     }
-    
 }
-
 }  // namespace behavior_hospital

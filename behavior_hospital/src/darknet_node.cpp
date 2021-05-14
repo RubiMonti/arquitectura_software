@@ -26,7 +26,6 @@
 #include <tf/transform_listener.h>
 
 #include <std_msgs/Float32.h>
-#include <std_msgs/Bool.h>
 #include <sensor_msgs/PointCloud2.h>
 
 #include <boost/algorithm/string.hpp>
@@ -59,23 +58,26 @@ public:
     void objectCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& box_msg)
     {
         int size = box_msg->bounding_boxes.size();
-        ROS_INFO("%i",arrived_);
+        ROS_INFO("%i", arrived_);
 
-
-        if(arrived_)
+        if (arrived_)
         {
             for (int iter = 0; iter <= size; iter++)
             {
-                if (box_msg->bounding_boxes[iter].Class == to_detect_ && box_msg->bounding_boxes[iter].probability >= 0.35)
+                if (box_msg->bounding_boxes[iter].Class == to_detect_ &&
+                    box_msg->bounding_boxes[iter].probability >= 0.35)
                 {
-                    ROS_INFO("Point xmin: %ld, xmax: %ld\n", box_msg->bounding_boxes[iter].xmin, box_msg->bounding_boxes[iter].xmax);
-                    ROS_INFO("Point ymin: %ld, ymax: %ld\n", box_msg->bounding_boxes[iter].ymin, box_msg->bounding_boxes[iter].ymax);
+                    ROS_INFO("Point xmin: %ld, xmax: %ld\n",
+                            box_msg->bounding_boxes[iter].xmin, box_msg->bounding_boxes[iter].xmax);
+                    ROS_INFO("Point ymin: %ld, ymax: %ld\n",
+                            box_msg->bounding_boxes[iter].ymin, box_msg->bounding_boxes[iter].ymax);
 
                     finish_detection_.publish(box_msg->bounding_boxes[iter]);
                 }
             }
         }
-        else{
+        else
+        {
             ROS_INFO("LLEGANDO A HABITACION");
         }
     }
@@ -103,6 +105,5 @@ int main(int argc, char** argv)
     DarknetDetection dd = DarknetDetection(argv[1]);
 
     ros::spin();
-  
     return 0;
 }
