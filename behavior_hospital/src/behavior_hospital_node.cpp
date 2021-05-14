@@ -21,6 +21,9 @@
 
 #include "ros/package.h"
 
+#include <string>
+#include <vector>
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "behavior_hospital");
@@ -32,13 +35,13 @@ int main(int argc, char **argv)
   factory.registerNodeType<behavior_hospital::FindApproach>("FindApproach");
 
   auto blackboard = BT::Blackboard::create();
-  blackboard->set<std::string>("room",argv[1]);
-  blackboard->set<std::string>("object",argv[2]);
+  blackboard->set<std::string>("room", argv[1]);
+  blackboard->set<std::string>("object", argv[2]);
 
   std::string pkgpath = ros::package::getPath("behavior_hospital");
   std::string xml_file = pkgpath + "/behavior_trees_xml/hospital_tree.xml";
 
-  BT::Tree tree = factory.createTreeFromFile(xml_file,blackboard);
+  BT::Tree tree = factory.createTreeFromFile(xml_file, blackboard);
 
   ros::Rate loop_rate(5);
 
