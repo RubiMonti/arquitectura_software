@@ -85,11 +85,11 @@ public:
         return;
       }
         auto point3d = pcrgb->at(coor2dx_, coor2dy_);
-        if (publish_transform_)
-        {
+        //if (publish_transform_)
+        //{
           publish_transform(point3d.x, point3d.y, point3d.z);
-          publish_transform_ = false;
-        }
+          //publish_transform_ = false;
+        //}
   }
 
   void publish_transform(const float x, const float y, const float z)

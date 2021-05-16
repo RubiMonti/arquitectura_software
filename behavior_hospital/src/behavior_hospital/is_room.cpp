@@ -29,7 +29,7 @@ namespace behavior_hospital
 IsRoom::IsRoom(const std::string& name, const BT::NodeConfiguration& config)
 : BT::ActionNodeBase(name, config), buffer_(), listener_(buffer_)
 {
-    arrived_pub = nh_.advertise<std_msgs::Bool>("/arrived", 1);
+    arrived_pub_ = nh_.advertise<std_msgs::Bool>("/arrived", 1);
 }
 
 void IsRoom::set_rooms(std::string arg)
@@ -75,8 +75,7 @@ void IsRoom::set_rooms(std::string arg)
     }
 }
 
-bool
-check_room()
+bool IsRoom::check_room()
 {
     geometry_msgs::TransformStamped map2bf_msg;
     try
@@ -95,14 +94,12 @@ check_room()
     return false;
 }
 
-void
-IsRoom::halt()
+void IsRoom::halt()
 {
   ROS_INFO("IsRoom halt");
 }
 
-BT::NodeStatus
-IsRoom::tick()
+BT::NodeStatus IsRoom::tick()
 {
     std_msgs::Bool msg;
 
