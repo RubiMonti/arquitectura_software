@@ -62,6 +62,7 @@ class IsRoom : public BT::ActionNodeBase
 
     bool get_rooms();
     bool check_room();
+    void set_rooms(std::string arg);
 
     void halt();
     BT::NodeStatus tick();
@@ -75,6 +76,8 @@ class IsRoom : public BT::ActionNodeBase
     ros::Publisher vel_pub_;
 
     geometry_msgs::Point position_;
+
+    ros::Publisher arrived_pub_;
 
     tf2_ros::Buffer buffer_;
     tf2_ros::StaticTransformBroadcaster tfBroadcaster_;

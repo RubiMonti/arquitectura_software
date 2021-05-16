@@ -70,7 +70,7 @@ FindApproach::halt()
 BT::NodeStatus
 FindApproach::tick()
 {
-    geometry_msgs::Twist msg;
+    geometry_msgs::Twist msg2;
 
     ROS_INFO("FindApproach tick");
     while (!ac.waitForServer(ros::Duration(5.0)))

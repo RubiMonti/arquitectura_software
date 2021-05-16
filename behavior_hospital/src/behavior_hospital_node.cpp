@@ -31,6 +31,7 @@ int main(int argc, char **argv)
 
   BT::BehaviorTreeFactory factory;
 
+  factory.registerNodeType<behavior_hospital::GoRoom>("IsRoom");
   factory.registerNodeType<behavior_hospital::GoRoom>("GoRoom");
   factory.registerNodeType<behavior_hospital::FindApproach>("FindApproach");
 
